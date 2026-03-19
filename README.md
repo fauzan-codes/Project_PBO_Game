@@ -115,6 +115,7 @@ Dimana:
 
 ## 🔁 Alur Program
 
+```teks
 START PROGRAM
      ↓
 MAIN MENU
@@ -126,12 +127,14 @@ GAME BERJALAN
 PAUSE / GAME OVER
      ↓
 KEMBALI KE MENU
+```
 
 
 ---
 
 ## 📂 Struktur Folder Project
 
+```teks
 project_pbo_game/
 │
 ├── main.py                  # Entry point program
@@ -167,6 +170,7 @@ project_pbo_game/
 │   │   ├── breakout_game.py
 │
 └── assets/                  # Gambar, sound, font
+```
 
 
 ---
