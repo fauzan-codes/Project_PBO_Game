@@ -11,9 +11,9 @@ Aplikasi yang dibuat adalah sebuah **Game Collection (Game Hub)** yang berisi be
 Contoh game yang akan dibuat:
 - Snake
 - Flappy Bird
-- Pong
-- Shooter (Space Invaders sederhana)
-- Breakout / Brick Breaker
+- Game3
+- Game4
+- Game5
 
 Project ini tidak hanya berfokus pada gameplay, tetapi juga pada penerapan konsep **OOP/PBO secara benar dan terstruktur**.
 
