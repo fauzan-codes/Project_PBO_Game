@@ -51,16 +51,22 @@ class Home:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        # PLAY BUTTON
+        # ===== PLAY BUTTON =====
         self.play_rect = pygame.Rect(0, 0, 250, 60)
         self.play_rect.center = (screen_width // 2, screen_height // 2)
 
-        # shadow play
+        # sync mouse -> selected
+        if self.play_rect.collidepoint(mouse_pos):
+            self.selected = 0
+
+        color_play = (200, 200, 200)
+        if self.play_rect.collidepoint(mouse_pos) or self.selected == 0:
+            color_play = (255, 255, 0)
+
+        # shadow
         shadow = self.play_rect.copy()
         shadow.y += 5
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
-
-        color_play = (255, 255, 0) if self.play_rect.collidepoint(mouse_pos) else (200, 200, 200)
 
         pygame.draw.rect(screen, color_play, self.play_rect, border_radius=15)
 
@@ -68,16 +74,22 @@ class Home:
         play_text_rect = play_text.get_rect(center=self.play_rect.center)
         screen.blit(play_text, play_text_rect)
 
-        # QUIT BUTTON
+        # ===== QUIT BUTTON =====
         self.quit_rect = pygame.Rect(0, 0, 250, 60)
         self.quit_rect.center = (screen_width // 2, screen_height // 2 + 90)
 
-        # shadow play
+        # sync mouse -> selected
+        if self.quit_rect.collidepoint(mouse_pos):
+            self.selected = 1
+
+        color_quit = (200, 200, 200)
+        if self.quit_rect.collidepoint(mouse_pos) or self.selected == 1:
+            color_quit = (255, 255, 0)
+
+        # shadow
         shadow = self.quit_rect.copy()
         shadow.y += 5
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
-
-        color_quit = (255, 255, 0) if self.quit_rect.collidepoint(mouse_pos) else (200, 200, 200)
 
         pygame.draw.rect(screen, color_quit, self.quit_rect, border_radius=15)
 
