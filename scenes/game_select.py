@@ -34,7 +34,7 @@ class GameSelect:
 
             elif event.key == pygame.K_ESCAPE:
                 from scenes.home import Home
-                self.game_manager.current_scene = Home(self.game_manager)
+                self.game_manager.change_scene(Home(self.game_manager))
 
         # MOUSE
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -48,15 +48,7 @@ class GameSelect:
             # klik back
             if self.back_rect.collidepoint(mouse_pos):
                 from scenes.home import Home
-                self.game_manager.current_scene = Home(self.game_manager)
-
-        # MOUSE CLICK
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_pos = pygame.mouse.get_pos()
-
-            for i, rect in enumerate(self.card_rects):
-                if rect.collidepoint(mouse_pos):
-                    self.start_game(i)
+                self.game_manager.change_scene(Home(self.game_manager))
 
 
     # ===== START GAME ===== 

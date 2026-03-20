@@ -46,10 +46,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-        current.handle_event(event)
+        if not game_manager.is_transitioning:
+            current.handle_event(event)
 
     current.update()
     current.draw(screen)
+
+    # TRANSITION
+    game_manager.update_transition() # Update transition
+    game_manager.draw_transition(screen) # draw transition (overlay)
 
     pygame.display.flip()
     clock.tick(60)

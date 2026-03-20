@@ -18,7 +18,7 @@ class Home:
             elif event.key == pygame.K_RETURN:
                 if self.selected == 0:
                     from scenes.game_select import GameSelect
-                    self.game_manager.current_scene = GameSelect(self.game_manager)
+                    self.game_manager.change_scene(GameSelect(self.game_manager))
                 elif self.selected == 1:
                     pygame.quit()
                     print("GAME KELUAR")
@@ -29,7 +29,7 @@ class Home:
 
             if self.play_rect.collidepoint(mouse_pos):
                 from scenes.game_select import GameSelect
-                self.game_manager.current_scene = GameSelect(self.game_manager)
+                self.game_manager.change_scene(GameSelect(self.game_manager))
 
             elif self.quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
