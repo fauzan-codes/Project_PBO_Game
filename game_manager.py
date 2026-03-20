@@ -1,6 +1,7 @@
 class GameManager:
     def __init__(self):
         self.current_game = None
+        self.current_scene = None
 
     def load_game(self, game):
         self.current_game = game
