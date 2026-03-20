@@ -55,8 +55,8 @@ class GameSelect:
     def start_game(self, index):
         game_class = self.games[index]["class"]
         if game_class:
-            game = game_class()
-            self.game_manager.load_game(game)
+            game = game_class(self.game_manager)
+            self.game_manager.change_scene(game)
 
     def update(self):
         pass
