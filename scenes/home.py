@@ -40,7 +40,7 @@ class Home:
         pass
 
     def draw(self, screen):
-        screen.fill((20, 20, 30))
+        screen.fill((30, 30, 40))
 
         screen_width = screen.get_width()
         screen_height = screen.get_height()

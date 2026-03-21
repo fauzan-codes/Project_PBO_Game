@@ -1,49 +1,55 @@
 import pygame
 from core.base_game import BaseGame
-# from scenes.game_select import GameSelect
 
 class SnakeGame(BaseGame):
     def __init__(self, game_manager):
         self.game_manager = game_manager
+        self.objects = []
 
-        # ===== STATE =====
+        # state
         self.state = "home"  # home | play | game_over
 
-        # ===== SCREEN =====
+        # screen
         self.screen = pygame.display.get_surface()
         self.width, self.height = self.screen.get_size()
 
-        # ===== UI AREA =====
+        # ui area
         self.header_height = 60
-        self.info_height = 120
 
-        # game window (default size)
-        self.game_width = 400
-        self.game_height = 400
+        # game window area
+        self.game_width = 800
+        self.game_height = 600
 
+        self.game_surface = pygame.Surface((self.game_width, self.game_height))
         self.fullscreen = False
 
-        self._calculate_layout()
+        self.calculate_layout()
 
-        # ===== FONT =====
+        # scroll
+        self.scroll_y = 0
+
+        # font
         self.font = pygame.font.Font(None, 40)
         self.small_font = pygame.font.Font(None, 28)
 
-        # ===== SCROLL INFO =====
-        self.info_scroll = 0
-        self.scroll_y = 0
-
-        # nanti diisi
-        self.home = None
-
-    # =========================
-    # 📐 Layout System
-    # =========================
-    def _calculate_layout(self):
+    # ==================== LAYOUT SYSTEM ====================
+    def calculate_layout(self):
         if self.fullscreen:
-            self.game_rect = pygame.Rect(0, 0, self.width, self.height)
+            ratio = 4 / 3 #Rasio game area
+
+            if self.width / self.height > ratio:
+                new_height = self.height - self.header_height
+                new_width = int(new_height * ratio)
+            else:
+                new_width = self.width
+                new_height = int(new_width / ratio)
+
+            x = (self.width - new_width) // 2
+            y = self.header_height
+
+            self.game_rect = pygame.Rect(x, y, new_width, new_height)
+
         else:
-            # center game window
             x = (self.width - self.game_width) // 2
             y = self.header_height + 20
 
@@ -64,9 +70,7 @@ class SnakeGame(BaseGame):
         else:
             self.info_rect = None
 
-    # =========================
-    # 🎮 EVENT
-    # =========================
+    # ==================== BUTTON EVENT ====================
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -77,20 +81,30 @@ class SnakeGame(BaseGame):
                 self.toggle_fullscreen()
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 4:  # scroll up
-                self.scroll_y += 20
-            elif event.button == 5:  # scroll down
-                self.scroll_y -= 20
-        
-        self._clamp_scroll()
+            mouse_pos = pygame.mouse.get_pos()
 
-    # =========================
-    # 🔄 UPDATE
-    # =========================
+            # ===== CLICK BACK =====
+            if hasattr(self, "back_rect") and self.back_rect.collidepoint(mouse_pos):
+                from scenes.game_select import GameSelect
+                self.game_manager.change_scene(GameSelect(self.game_manager))
+
+            # ===== CLICK FULLSCREEN =====
+            if hasattr(self, "fullscreen_rect") and self.fullscreen_rect.collidepoint(mouse_pos):
+                self.toggle_fullscreen()
+
+            # ===== SCROLL =====
+            if event.button == 4:
+                self.scroll_y += 20
+            elif event.button == 5:
+                self.scroll_y -= 20
+
+            self.scroll_event()
+
+    # ==================== UPDATE ====================
     def update(self):
         pass
 
-    def _get_content_height(self):
+    def get_content_height(self):
         if self.fullscreen:
             return self.height
 
@@ -108,8 +122,8 @@ class SnakeGame(BaseGame):
             info_content_height
         )
     
-    def _clamp_scroll(self):
-        content_height = self._get_content_height()
+    def scroll_event(self):
+        content_height = self.get_content_height()
 
         min_scroll = min(0, self.height - content_height)
         max_scroll = 0
@@ -119,78 +133,106 @@ class SnakeGame(BaseGame):
         if self.scroll_y > max_scroll:
             self.scroll_y = max_scroll
 
-    # =========================
-    # 🎨 DRAW
-    # =========================
+    # ==================== UI ====================
     def draw(self, screen):
-        screen.fill((30, 30, 30))
+        screen.fill((30, 30, 40))
 
-        # game & info dulu (yang kena scroll)
-        self._draw_game_area(screen)
+        # game area + info (kena scroll)
+        self.draw_game_area(screen)
+
         if not self.fullscreen:
-            self._draw_info(screen)
+            self.draw_info(screen)
 
-        self._draw_header(screen)
+        # header selalu di atas (paling depan)
+        self.draw_header(screen)
 
-    # =========================
-    # 🔝 HEADER
-    # =========================
-    def _draw_header(self, screen):
-        pygame.draw.rect(screen, (50, 50, 50), self.header_rect)
 
-        # ===== BACK BUTTON =====
-        back_text = self.small_font.render("< Back", True, (255, 255, 255))
-        screen.blit(back_text, (10, 15))
+    def draw_game_area(self, screen):
+        rect = self.game_rect.copy()
+        rect.y += self.scroll_y
+
+        # shadow
+        shadow = rect.copy()
+        shadow.y += 6
+        pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=5)
+
+        # frame luar (card style)
+        pygame.draw.rect(screen, (200, 200, 200), rect, border_radius=5)
+
+        # area dalam (padding)
+        inner_rect = rect.inflate(-10, -10)
+
+        # ===== DRAW KE SURFACE =====
+        self.game_surface.fill((0, 155, 0))
+
+        text = self.small_font.render("GAME AREA", True, (255, 255, 255))
+        self.game_surface.blit(
+            text,
+            (self.game_width // 2 - text.get_width() // 2,
+            self.game_height // 2)
+        )
+
+        scaled_surface = pygame.transform.smoothscale(
+            self.game_surface,
+            (inner_rect.width, inner_rect.height)
+        )
+
+        screen.blit(scaled_surface, (inner_rect.x, inner_rect.y))
+
+    # ==================== HEADER ====================
+    def draw_header(self, screen):
+        # shadow
+        shadow = self.header_rect.copy()
+        shadow.y += 3
+        pygame.draw.rect(screen, (50, 50, 50), shadow)
+
+        pygame.draw.rect(screen, (40, 40, 60), self.header_rect)
 
         # ===== TITLE =====
         title = self.font.render("SNAKE GAME", True, (255, 255, 255))
         screen.blit(title, (self.width // 2 - title.get_width() // 2, 15))
 
-        # ===== FULLSCREEN BUTTON =====
-        text = "Windowed" if self.fullscreen else "Fullscreen"
+        # ===== BACK BUTTON =====
+        self.back_rect = pygame.Rect(20, 10, 100, 40)
+        self.draw_button(screen, self.back_rect, "BACK")
 
-        self.fullscreen_rect = pygame.Rect(
-            self.width - 150, 10, 140, 40
-        )
+        # ===== FULLSCREEN =====
+        text = "WINDOW" if self.fullscreen else "FULL"
+        self.fullscreen_rect = pygame.Rect(self.width - 120, 10, 100, 40)
+        self.draw_button(screen, self.fullscreen_rect, text)
 
+
+    def draw_button(self, screen, rect, text):
         mouse_pos = pygame.mouse.get_pos()
 
         color = (200, 200, 200)
-        if self.fullscreen_rect.collidepoint(mouse_pos):
+        if rect.collidepoint(mouse_pos):
             color = (255, 255, 0)
 
-        pygame.draw.rect(screen, color, self.fullscreen_rect, border_radius=8)
+        # shadow
+        shadow = rect.copy()
+        shadow.y += 4
+        pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=10)
 
-        btn_text = self.small_font.render(text, True, (0, 0, 0))
-        text_rect = btn_text.get_rect(center=self.fullscreen_rect.center)
-        screen.blit(btn_text, text_rect)
+        # button
+        pygame.draw.rect(screen, color, rect, border_radius=10)
 
-    # =========================
-    # 🎮 GAME WINDOW
-    # =========================
-    def _draw_game_area(self, screen):
-        rect = self.game_rect.copy()
-        rect.y += self.scroll_y
+        txt = self.small_font.render(text, True, (0, 0, 0))
+        text_rect = txt.get_rect(center=rect.center)
+        screen.blit(txt, text_rect)
 
-        pygame.draw.rect(screen, (0, 0, 0), rect)
-
-        text = self.small_font.render("GAME AREA", True, (255, 255, 255))
-        screen.blit(
-            text,
-            (
-                rect.centerx - text.get_width() // 2,
-                rect.centery
-            )
-        )
-
-    # =========================
-    # 📜 INFO PANEL
-    # =========================
-    def _draw_info(self, screen):
+    # ===================== INFO ====================
+    def draw_info(self, screen):
         rect = self.info_rect.copy()
         rect.y += self.scroll_y
 
-        pygame.draw.rect(screen, (40, 40, 40), rect)
+        # shadow
+        shadow = rect.copy()
+        shadow.y += 5
+        pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=10)
+
+        # panel
+        pygame.draw.rect(screen, (40, 40, 50), rect, border_radius=10)
 
         info_text = self._get_info_text()
 
@@ -223,10 +265,8 @@ class SnakeGame(BaseGame):
             "Press F untuk fullscreen"
         ]
 
-    # =========================
-    # 🖥️ FULLSCREEN
-    # =========================
+    # ==================== FULLSCREEN SYSTEM ====================
     def toggle_fullscreen(self):
         self.fullscreen = not self.fullscreen
-        self._calculate_layout()
-        self._clamp_scroll()
+        self.calculate_layout()
+        self.scroll_event()
