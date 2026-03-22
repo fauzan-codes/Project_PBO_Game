@@ -1,5 +1,6 @@
 import pygame
 from core.base_game import BaseGame
+from games.snake.snake_scene import SnakeScene
 
 class SnakeGame(BaseGame):
     def __init__(self, game_manager):
@@ -24,6 +25,7 @@ class SnakeGame(BaseGame):
         self.fullscreen = False
 
         self.calculate_layout()
+        self.scene = SnakeScene(self.game_width, self.game_height)
 
         # scroll
         self.scroll_y = 0
@@ -100,9 +102,39 @@ class SnakeGame(BaseGame):
 
             self.scroll_event()
 
+        # ambil posisi mouse relatif ke game area
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mx, my = pygame.mouse.get_pos()
+
+            # posisi game area
+            inner_rect = self.game_rect.inflate(-10, -10)
+            inner_rect.y += self.scroll_y
+
+            if inner_rect.collidepoint(mx, my):
+                # ubah ke koordinat game_surface
+                rel_x = (mx - inner_rect.x) * (self.game_width / inner_rect.width)
+                rel_y = (my - inner_rect.y) * (self.game_height / inner_rect.height)
+
+                self.scene.handle_event(event, (rel_x, rel_y))
+        else:
+            mx, my = pygame.mouse.get_pos()
+
+            inner_rect = self.game_rect.inflate(-10, -10)
+            inner_rect.y += self.scroll_y
+
+            rel_mouse = None
+
+            if inner_rect.collidepoint(mx, my):
+                rel_x = (mx - inner_rect.x) * (self.game_width / inner_rect.width)
+                rel_y = (my - inner_rect.y) * (self.game_height / inner_rect.height)
+                rel_mouse = (rel_x, rel_y)
+
+            # kirim ke scene SEMUA EVENT
+            self.scene.handle_event(event, rel_mouse)
+
     # ==================== UPDATE ====================
     def update(self):
-        pass
+        self.scene.update()
 
     def get_content_height(self):
         if self.fullscreen:
@@ -159,14 +191,10 @@ class SnakeGame(BaseGame):
         inner_rect = rect.inflate(-10, -10)
 
         # game ke surface
-        self.game_surface.fill((0, 155, 0))
+        self.game_surface.fill((0, 0, 0))
 
-        text = self.small_font.render("GAME AREA", True, (255, 255, 255))
-        self.game_surface.blit(
-            text,
-            (self.game_width // 2 - text.get_width() // 2,
-            self.game_height // 2)
-        )
+        # render isi game
+        self.scene.draw(self.game_surface)
 
         scaled_surface = pygame.transform.smoothscale(
             self.game_surface,
