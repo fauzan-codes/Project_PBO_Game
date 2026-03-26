@@ -26,7 +26,6 @@ class Snake:
 
     # ================= INPUT =================
     def set_direction(self, direction):
-        # cegah balik arah langsung
         if (direction[0] * -1, direction[1] * -1) != self.direction:
             self.next_direction = direction
 

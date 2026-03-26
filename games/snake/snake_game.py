@@ -82,7 +82,7 @@ class SnakeGame(BaseGame):
             if event.key == pygame.K_f:
                 self.toggle_fullscreen()
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
 
             # button back
@@ -94,6 +94,10 @@ class SnakeGame(BaseGame):
             if hasattr(self, "fullscreen_rect") and self.fullscreen_rect.collidepoint(mouse_pos):
                 self.toggle_fullscreen()
 
+
+        if event.type == pygame.MOUSEBUTTONDOWN :
+            mouse_pos = pygame.mouse.get_pos()
+
             # scroll event
             if event.button == 4:
                 self.scroll_y += 20
@@ -103,7 +107,7 @@ class SnakeGame(BaseGame):
             self.scroll_event()
 
         # ambil posisi mouse relatif ke game area
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mx, my = pygame.mouse.get_pos()
 
             # posisi game area

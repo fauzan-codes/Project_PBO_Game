@@ -37,7 +37,7 @@ class GameSelect:
                 self.game_manager.change_scene(Home(self.game_manager))
 
         # MOUSE
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
 
             # BACK BUTTON

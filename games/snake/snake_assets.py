@@ -26,7 +26,7 @@ class SnakeAssets:
 
     def update(self):
         self.timer += 1
-        if self.timer > 50:
+        if self.timer > 20:
             self.timer = 0
             self.frame_index = (self.frame_index + 1) % 2
 
@@ -79,4 +79,4 @@ class SnakeAssets:
         return self.get_tiles()[14]
 
     def get_bg(self): #background
-        return self.get_tiles()[15]
+        return self.tiles1[15]
