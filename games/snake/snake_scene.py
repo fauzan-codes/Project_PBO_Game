@@ -2,167 +2,180 @@ import pygame
 from games.snake.snake_assets import SnakeAssets
 from games.snake.snake import Snake
 from games.snake.food import Food
+from games.snake.snake_renderer import SnakeRenderer
+from games.snake.snake_ui import SnakeUI
+from games.snake.snake_animation import SnakeAnimation
 
 class SnakeScene:
-    def __init__(self, width, height):
+    def __init__(self, width, height, game):
+        self.game = game
         self.width = width
         self.height = height
 
-        self.state = "home"  # home | level | play | pause
-
-        self.font_big = pygame.font.Font(None, 80)
-        self.font = pygame.font.Font(None, 40)
-
-        # tombol
-        self.play_rect = pygame.Rect(0, 0, 200, 60)
-        self.play_rect.center = (width // 2, height // 2 + 50)
-
-        # tombol easy
-        self.easy_rect = pygame.Rect(0, 0, 200, 60)
-        self.easy_rect.center = (self.width // 2, self.height // 2)
-
+        self.state = "home"
         self.mouse_pos = None
+
         self.assets = SnakeAssets()
+        self.renderer = SnakeRenderer(self.assets)
+        self.ui = SnakeUI(width, height)
+        self.anim = SnakeAnimation(width, height)
 
-        # animasi sederhana (nanti pakai snake_assets)
-        self.anim_y = height // 2 - 100
-        self.anim_x = 0
-
-        # ===== HOME SNAKE ANIMATION =====
-        self.anim_snake = [(0, 5), (-1, 5), (-2, 5)]
-        self.anim_dir = (1, 0)
-
-        self.anim_timer = 0 
-        self.anim_delay = 8
-
-        self.anim_pattern_index = 0
-        self.anim_step = 0
-
-        # panjang random
-        self.anim_length = 6
-
-        self.anim_patterns = [
-            # lebih panjang & natural
-            [(1,0)]*12 + [(0,1)]*6 + [(1,0)]*12,
-
-            [(1,0)]*10 + [(0,1)]*6 + [(1,0)]*6 + [(0,-1)]*6,
-
-            [(0,-1)]*6 + [(1,0)]*10 + [(0,1)]*6 + [(-1,0)]*10,
-        ]
-            
-        self.medium_rect = pygame.Rect(0, 0, 200, 60)
-        self.medium_rect.center = (self.width // 2, self.height // 2 + 80)
-
-        self.hard_rect = pygame.Rect(0, 0, 200, 60)
-        self.hard_rect.center = (self.width // 2, self.height // 2 + 160)
-
-
-
-
-
-        # hitung ukuran tile biar muat tinggi
         self.grid_count = 25
-        self.grid_size = self.height // self.grid_count
 
-        self.grid_width = self.grid_count
-        self.grid_height = self.grid_count
+        self.score = 0
+        self.level = "easy"
+
+        self.start_game("easy")
+
+        self.start_time = 0
+        self.elapsed_time = 0
+        self.pause_time = 0
+
+    def start_game(self, level):
+        self.start_time = pygame.time.get_ticks()
+        self.elapsed_time = 0
+        self.pause_time = 0
+
+        self.level = level
+        self.score = 0  
 
         self.snake = Snake(self.grid_count, self.grid_count)
         self.food = Food(self.grid_count, self.grid_count)
-        self.food.spawn(self.snake.body)
-        self.score = 0
 
-    # ================= EVENT =================
+        self.game.objects.clear()
+        self.game.objects += [self.snake, self.food]
+
+        self.food.spawn(self.snake.body)
+
+        if level == "easy":
+            self.snake.move_delay = 12
+        elif level == "medium":
+            self.snake.move_delay = 8
+        else:
+            self.snake.move_delay = 6
+
     def handle_event(self, event, mouse_pos):
         self.mouse_pos = mouse_pos
 
-        # ===== HOME =====
+        # ================= GLOBAL ESC =================
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+
+                if self.state == "home":
+                    from scenes.game_select import GameSelect
+                    self.game.game_manager.change_scene(GameSelect(self.game.game_manager))
+
+                elif self.state == "level":
+                    self.state = "home"
+
+                elif self.state == "play":
+                    self.state = "pause"
+                    self.pause_start = pygame.time.get_ticks()
+
+                    # self.snake.move_timer = 0
+                    self.game.pause()
+
+                elif self.state == "pause":
+                    self.state = "play"
+                    self.pause_time += pygame.time.get_ticks() - self.pause_start
+
+                    # self.snake.move_timer = 0
+                    self.game.resume()
+
+                return 
+
+        # ================= HOME =================
         if self.state == "home":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 self.state = "level"
-                return
 
-            if event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_SPACE, pygame.K_RETURN]:
-                    self.state = "level"
-                    return
-
-        # ===== LEVEL =====
+        # ================= LEVEL =================
         elif self.state == "level":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if mouse_pos:
-                    if self.easy_rect.collidepoint(mouse_pos):
+                    if self.ui.easy.collidepoint(mouse_pos):
                         self.start_game("easy")
-                        return
+                        self.state = "play"
 
-                    elif self.medium_rect.collidepoint(mouse_pos):
+                    elif self.ui.medium.collidepoint(mouse_pos):
                         self.start_game("medium")
-                        return
+                        self.state = "play"
 
-                    elif self.hard_rect.collidepoint(mouse_pos):
+                    elif self.ui.hard.collidepoint(mouse_pos):
                         self.start_game("hard")
-                        return
+                        self.state = "play"
 
-        # ===== PLAY =====
+        # ================= PLAY =================
         elif self.state == "play":
             if event.type == pygame.KEYDOWN:
-                if event.key in [pygame.K_w, pygame.K_UP]:
-                    self.snake.set_direction((0, -1))
-                elif event.key in [pygame.K_d, pygame.K_RIGHT]:
-                    self.snake.set_direction((1, 0))
-                elif event.key in [pygame.K_s, pygame.K_DOWN]:
-                    self.snake.set_direction((0, 1))
-                elif event.key in [pygame.K_a, pygame.K_LEFT]:
-                    self.snake.set_direction((-1, 0))
 
-    # ================= UPDATE =================
+                dirs = {
+                    pygame.K_w:(0,-1),
+                    pygame.K_s:(0,1),
+                    pygame.K_a:(-1,0),
+                    pygame.K_d:(1,0),
+                    pygame.K_UP:(0,-1),
+                    pygame.K_DOWN:(0,1),
+                    pygame.K_LEFT:(-1,0),
+                    pygame.K_RIGHT:(1,0),
+                }
+
+                if event.key in dirs:
+                    self.snake.set_direction(dirs[event.key])
+
+        # ================= PAUSE =================
+        elif self.state == "pause":
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_r:
+                    self.start_game(self.level)
+                    self.state = "play"
+
+                elif event.key == pygame.K_h:
+                    self.state = "home"
+
+            # mouse button pause
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.mouse_pos:
+                    if self.ui.btn_resume.collidepoint(self.mouse_pos):
+                        self.state = "play"
+
+                    elif self.ui.btn_restart.collidepoint(self.mouse_pos):
+                        self.start_game(self.level)
+                        self.state = "play"
+
+                    elif self.ui.btn_home.collidepoint(self.mouse_pos):
+                        self.state = "home"
+
+        elif self.state == "game_over":
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    self.start_game(self.level)
+                    self.state = "play"
+                elif event.key == pygame.K_h:
+                    self.state = "home"
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if self.mouse_pos:
+                    if self.ui.btn_restart.collidepoint(self.mouse_pos):
+                        self.start_game(self.level)
+                        self.state = "play"
+
+                    elif self.ui.btn_home.collidepoint(self.mouse_pos):
+                        self.state = "home"
+                
+
     def update(self):
         self.assets.update()
-        if self.state in ["home", "level"]:
-            self.anim_timer += 1
 
-            if self.anim_timer >= self.anim_delay:
-                self.anim_timer = 0
-
-                pattern = self.anim_patterns[self.anim_pattern_index]
-
-                # ambil arah dari pattern
-                next_dir = pattern[self.anim_step]
-
-                # 🚫 cegah 180 derajat
-                if (next_dir[0] * -1, next_dir[1] * -1) == self.anim_dir:
-                    next_dir = self.anim_dir  # pakai arah lama
-
-                self.anim_dir = next_dir
-                self.anim_step += 1
-
-                # reset kalau selesai pattern
-                if self.anim_step >= len(pattern):
-                    self.anim_step = 0
-                    self.anim_pattern_index = (self.anim_pattern_index + 1) % len(self.anim_patterns)
-
-                # MOVE (kayak snake asli)
-                head_x, head_y = self.anim_snake[0]
-                dx, dy = self.anim_dir
-
-                new_head = (head_x + dx, head_y + dy)
-
-                # wrap layar
-                new_head = (
-                    new_head[0] % (self.width // 16),
-                    new_head[1] % (self.height // 16)
-                )
-
-                self.anim_snake.insert(0, new_head)
-
-                # panjang random
-                if len(self.anim_snake) > self.anim_length:
-                    self.anim_snake.pop()
-
+        # ================= PLAY =================
         if self.state == "play":
+            current_time = pygame.time.get_ticks()
+            self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
+
             self.snake.update()
 
-            # makan food
+            # makan
             if self.snake.body[0] == self.food.position:
                 self.snake.eat()
                 self.food.spawn(self.snake.body)
@@ -171,271 +184,125 @@ class SnakeScene:
             # mati
             if self.snake.check_self_collision():
                 self.state = "game_over"
+                self.game.pause()
 
-    # ================= DRAW =================
+                # freeze time
+                current_time = pygame.time.get_ticks()
+                self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
+                self.snake.move_timer = 0
+
+        elif self.state in ["home", "level"]:
+            self.anim.update()
+
+        elif self.state in ["pause", "game_over"]:
+            return
+
+
+
     def draw(self, surface):
-        if self.state == "home":
-            self.draw_home(surface)
-
-        elif self.state == "level":
-            self.draw_level(surface)
-
-        elif self.state == "play":
+        if self.state == "play":
             self.draw_play(surface)
 
-    def draw_button(self, surface, rect, text):
-        mouse_pos = self.mouse_pos
+        elif self.state == "pause":
+            self.draw_play(surface)
+            self.ui.draw_pause_menu(surface, self.mouse_pos)
 
-        color = (200, 200, 200)
-        if mouse_pos and rect.collidepoint(mouse_pos):
-            color = (255, 255, 0)
+        elif self.state == "game_over":
+            self.draw_play(surface)
+            self.ui.draw_game_over(surface, self.score, self.elapsed_time, self.mouse_pos)
 
-        pygame.draw.rect(surface, color, rect, border_radius=10)
+        else:
+            self.draw_menu(surface)
 
-        txt = self.font.render(text, True, (0, 0, 0))
-        surface.blit(txt, txt.get_rect(center=rect.center))
 
-    # ================= HOME =================
-    def draw_home(self, surface):
+
+    def draw_menu(self, surface):
         bg = self.assets.get_bg()
 
+        # background
         for y in range(0, self.height, 16):
             for x in range(0, self.width, 16):
                 surface.blit(bg, (x, y))
 
-        # animasi snake (sementara kotak dulu)
-        # tiles = self.assets.get_tiles()
+        # animasi snake
+        self.renderer.draw(surface, self.anim.body, 16)
 
-        # # arah ke kanan
-        # head = self.assets.get_head(1)   # kanan
-        # body = tiles[13]                # horizontal
-        # tail = self.assets.get_tail(1)
+        # ===== HOME UI =====
+        if self.state == "home":
+            title = self.ui.font_big.render("SNAKE", True, (255,255,0))
+            surface.blit(title, (self.width//2 - title.get_width()//2, 80))
 
-        # gambar snake (5 segment)
-        # tiles = self.assets.get_tiles()
-        if len(self.anim_snake) < 2:
-            return
+            text = self.ui.font.render("CLICK TO START", True, (255,255,255))
+            surface.blit(text, (self.width//2 - text.get_width()//2, self.height - 100))
 
-        tile = 16
-        for i in range(len(self.anim_snake)):
-            x, y = self.anim_snake[i]
-            pos = (x * tile, y * tile)
+        # ===== LEVEL UI =====
+        elif self.state == "level":
+            title = self.ui.font_big.render("SELECT LEVEL", True, (255,255,0))
+            surface.blit(title, (self.width//2 - title.get_width()//2, 100))
 
-            if i == 0:
-                dir = self.get_dir(self.anim_snake[i], self.anim_snake[i+1])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_head(direction_map[dir])
-
-            elif i == len(self.anim_snake) - 1:
-                dir = self.get_dir(self.anim_snake[i-1], self.anim_snake[i])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_tail(direction_map[dir])
-
-            else:
-                prev_dir = self.get_dir(self.anim_snake[i-1], self.anim_snake[i])
-                next_dir = self.get_dir(self.anim_snake[i], self.anim_snake[i+1])
-
-                if prev_dir == next_dir:
-                    sprite = self.assets.get_body_straight(prev_dir)
-                else:
-                    sprite = self.assets.get_turn(prev_dir, next_dir)
-
-            surface.blit(sprite, pos)
-
-        
-
-        # judul
-        title = self.font_big.render("SNAKE", True, (255, 255, 0))
-        surface.blit(title, (self.width//2 - title.get_width()//2, 80))
-
-        # click to start
-        text = self.font.render("CLICK TO START", True, (255, 255, 255))
-        surface.blit(text, (self.width//2 - text.get_width()//2, self.height - 100))
-
-
-    def draw_level(self, surface):
-        bg = self.assets.get_bg()
-
-        for y in range(0, self.height, 16):
-            for x in range(0, self.width, 16):
-                surface.blit(bg, (x, y))
-
-        if len(self.anim_snake) < 2:
-            return
-
-        tile = 16
-        for i in range(len(self.anim_snake)):
-            x, y = self.anim_snake[i]
-            pos = (x * tile, y * tile)
-
-            if i == 0:
-                dir = self.get_dir(self.anim_snake[i], self.anim_snake[i+1])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_head(direction_map[dir])
-
-            elif i == len(self.anim_snake) - 1:
-                dir = self.get_dir(self.anim_snake[i-1], self.anim_snake[i])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_tail(direction_map[dir])
-
-            else:
-                prev_dir = self.get_dir(self.anim_snake[i-1], self.anim_snake[i])
-                next_dir = self.get_dir(self.anim_snake[i], self.anim_snake[i+1])
-
-                if prev_dir == next_dir:
-                    sprite = self.assets.get_body_straight(prev_dir)
-                else:
-                    sprite = self.assets.get_turn(prev_dir, next_dir)
-
-            surface.blit(sprite, pos)
-
-        title = self.font_big.render("SELECT LEVEL", True, (255, 255, 0))
-        surface.blit(title, (self.width//2 - title.get_width()//2, 100))
-
-        self.draw_button(surface, self.easy_rect, "EASY")
-        self.draw_button(surface, self.medium_rect, "MEDIUM")
-        self.draw_button(surface, self.hard_rect, "HARD")
-
+            self.ui.draw_button(surface, self.ui.easy, "EASY", self.mouse_pos)
+            self.ui.draw_button(surface, self.ui.medium, "MEDIUM", self.mouse_pos)
+            self.ui.draw_button(surface, self.ui.hard, "HARD", self.mouse_pos)
 
     def draw_play(self, surface):
-        tile = self.grid_size
+        surface.fill((20, 20, 30))
 
-        # background luar
-        surface.fill((30, 30, 40))
+        # ===== LAYOUT =====
+        sidebar_width = 200
+        padding = 20
 
-        # center map
+        map_area_width = self.width - sidebar_width - padding*3
+        map_area_height = self.height - padding*2
+
+        map_size = min(map_area_width, map_area_height)
+
+        tile = map_size // self.grid_count
+
         map_size = tile * self.grid_count
-        offset_x = (self.width - map_size) // 2
+
+        offset_x = padding
         offset_y = (self.height - map_size) // 2
 
-        # ===== SCALE ASSETS =====
-        bg = pygame.transform.scale(self.assets.get_bg(), (tile, tile))
-        food_img = pygame.transform.scale(self.assets.get_food(), (tile, tile))
+        # ===== DRAW BORDER MAP =====
+        border_rect = pygame.Rect(
+            offset_x - 4,
+            offset_y - 4,
+            map_size + 8,
+            map_size + 8
+        )
 
-        # map
+        pygame.draw.rect(surface, (100, 255, 100), border_rect, border_radius=8)
+
+        # ===== DRAW MAP =====
+        bg = pygame.transform.scale(self.assets.get_bg(), (tile, tile))
+
         for y in range(self.grid_count):
             for x in range(self.grid_count):
                 surface.blit(bg, (offset_x + x*tile, offset_y + y*tile))
 
-        # food
+        # ===== DRAW FOOD =====
         fx, fy = self.food.position
+        food_img = pygame.transform.scale(self.assets.get_food(), (tile, tile))
         surface.blit(food_img, (offset_x + fx*tile, offset_y + fy*tile))
 
+        # ===== DRAW SNAKE =====
+        self.renderer.draw(surface, self.snake.body, tile, (offset_x, offset_y))
 
-        # snake
-        # tiles = self.assets.get_tiles()
-        tile = self.grid_size
+        # ===== SIDEBAR =====
+        panel_x = offset_x + map_size + padding
+        panel_y = offset_y
+        panel_width = sidebar_width
+        panel_height = map_size
 
-        for i in range(len(self.snake.body)):
-            x, y = self.snake.body[i]
-            pos = (offset_x + x*tile, offset_y + y*tile)
+        self.ui.draw_side_panel(
+            surface,
+            panel_x,
+            panel_y,
+            panel_width,
+            panel_height,
+            self.score,
+            self.level,
+            self.elapsed_time
+        )
 
-            # HEAD
-            if i == 0:
-                dir = self.get_dir(self.snake.body[i], self.snake.body[i+1])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_head(direction_map[dir])
-
-            # TAIL
-            elif i == len(self.snake.body) - 1:
-                dir = self.get_dir(self.snake.body[i-1], self.snake.body[i])
-
-                direction_map = {
-                    (0, -1): 2,
-                    (1, 0): 3,
-                    (0, 1): 0,
-                    (-1, 0): 1
-                }
-
-                sprite = self.assets.get_tail(direction_map[dir])
-
-            # BODY
-            else:
-                prev_dir = self.get_dir(self.snake.body[i-1], self.snake.body[i])
-                next_dir = self.get_dir(self.snake.body[i], self.snake.body[i+1])
-
-                if prev_dir == next_dir:
-                    sprite = self.assets.get_body_straight(prev_dir)
-                else:
-                    sprite = self.assets.get_turn(prev_dir, next_dir)
-
-            # SCALE
-            sprite = pygame.transform.scale(sprite, (tile, tile))
-            surface.blit(sprite, pos)
-
-
-    def start_game(self, level):
-        self.state = "play"
-
-        # reset snake & food
-        self.snake = Snake(self.grid_count, self.grid_count)
-        self.food = Food(self.grid_count, self.grid_count)
-        self.food.spawn(self.snake.body)
-
-        self.score = 0
-
-        # speed
-        if level == "easy":
-            self.snake.move_delay = 12
-
-        if level == "medium":
-            self.snake.move_delay = 8
-
-        elif level == "hard":
-            self.snake.move_delay = 8
-
-
-    def get_dir(self, a, b):
-        dx = b[0] - a[0]
-        dy = b[1] - a[1]
-
-        # HANDLE WRAP X
-        if abs(dx) > 1:
-            if dx > 0:
-                dx = -1
-            else:
-                dx = 1
-
-        # HANDLE WRAP Y
-        if abs(dy) > 1:
-            if dy > 0:
-                dy = -1
-            else:
-                dy = 1
-
-        return (dx, dy)
+        

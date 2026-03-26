@@ -1,7 +1,11 @@
 import random
+from core.game_object import GameObject
 
-class Food:
+class Food(GameObject):
     def __init__(self, grid_width, grid_height):
+        super().__init__(0, 0)
+
+
         self.grid_width = grid_width
         self.grid_height = grid_height
 
@@ -15,3 +19,6 @@ class Food:
             if (x, y) not in snake_body:
                 self.position = (x, y)
                 break
+
+    def draw(self, surface):
+        pass

@@ -1,7 +1,9 @@
-import random
+from core.game_object import GameObject
 
-class Snake:
+class Snake(GameObject):
     def __init__(self, grid_width, grid_height):
+        super().__init__(0, 0)
+
         self.grid_width = grid_width
         self.grid_height = grid_height
 
@@ -67,3 +69,7 @@ class Snake:
     def check_self_collision(self):
         head = self.body[0]
         return head in self.body[1:]
+    
+
+    def draw(self, surface):
+        pass

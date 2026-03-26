@@ -1,12 +1,17 @@
 import pygame
+import os
 
 class SnakeAssets:
     def __init__(self):
         self.size = 16
 
         # load sprite
-        self.sprite1 = pygame.image.load("assets/Snake/snake.png").convert_alpha()
-        self.sprite2 = pygame.image.load("assets/Snake/snake2.png").convert_alpha()
+
+        BASE_DIR = os.path.dirname(__file__)
+        self.sprite1 = pygame.image.load(os.path.join(BASE_DIR, "../../assets/Snake/snake.png"))
+        self.sprite2 = pygame.image.load(os.path.join(BASE_DIR, "../../assets/Snake/snake2.png"))
+        # self.sprite1 = pygame.image.load("assets/Snake/snake.png").convert_alpha()
+        # self.sprite2 = pygame.image.load("assets/Snake/snake2.png").convert_alpha()
 
         # slice
         self.tiles1 = self.slice(self.sprite1)

@@ -4,11 +4,9 @@ from games.snake.snake_scene import SnakeScene
 
 class SnakeGame(BaseGame):
     def __init__(self, game_manager):
-        self.game_manager = game_manager
-        self.objects = []
+        super().__init__()
 
-        # state
-        self.state = "home"  # home | play | game_over
+        self.game_manager = game_manager
 
         # screen
         self.screen = pygame.display.get_surface()
@@ -25,7 +23,7 @@ class SnakeGame(BaseGame):
         self.fullscreen = False
 
         self.calculate_layout()
-        self.scene = SnakeScene(self.game_width, self.game_height)
+        self.scene = SnakeScene(self.game_width, self.game_height, self)
 
         # scroll
         self.scroll_y = 0
@@ -36,31 +34,40 @@ class SnakeGame(BaseGame):
 
     # ==================== LAYOUT SYSTEM ====================
     def calculate_layout(self):
-        if self.fullscreen:
-            ratio = 4 / 3 #Rasio game area
+        ratio = 4 / 3
 
-            if self.width / self.height > ratio:
-                new_height = self.height - self.header_height
-                new_width = int(new_height * ratio)
-            else:
-                new_width = self.width
+        # fullscreen
+        if self.fullscreen:
+            available_width = self.width
+            available_height = self.height - self.header_height
+
+            new_height = available_height
+            new_width = int(new_height * ratio)
+
+            if new_width > available_width:
+                new_width = available_width
                 new_height = int(new_width / ratio)
 
+            # center
             x = (self.width - new_width) // 2
-            y = self.header_height
+            y = self.header_height + (available_height - new_height) // 2
 
             self.game_rect = pygame.Rect(x, y, new_width, new_height)
 
+        # window
         else:
-            x = (self.width - self.game_width) // 2
+            new_width = self.game_width
+            new_height = self.game_height
+
+            x = (self.width - new_width) // 2
             y = self.header_height + 20
 
-            self.game_rect = pygame.Rect(x, y, self.game_width, self.game_height)
+            self.game_rect = pygame.Rect(x, y, new_width, new_height)
 
         # header
         self.header_rect = pygame.Rect(0, 0, self.width, self.header_height)
 
-        # info panel
+        # info 
         if not self.fullscreen:
             info_height = len(self._get_info_text()) * 30 + 20
             self.info_rect = pygame.Rect(
@@ -75,10 +82,6 @@ class SnakeGame(BaseGame):
     # ==================== BUTTON EVENT ====================
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                from scenes.game_select import GameSelect
-                self.game_manager.change_scene(GameSelect(self.game_manager))
-
             if event.key == pygame.K_f:
                 self.toggle_fullscreen()
 
@@ -136,8 +139,20 @@ class SnakeGame(BaseGame):
             # kirim ke scene SEMUA EVENT
             self.scene.handle_event(event, rel_mouse)
 
+    def scroll_event(self):
+        content_height = self.get_content_height()
+
+        min_scroll = min(0, self.height - content_height)
+        max_scroll = 0
+
+        if self.scroll_y < min_scroll:
+            self.scroll_y = min_scroll
+        if self.scroll_y > max_scroll:
+            self.scroll_y = max_scroll
+
     # ==================== UPDATE ====================
     def update(self):
+        super().update()
         self.scene.update()
 
     def get_content_height(self):
@@ -157,17 +172,6 @@ class SnakeGame(BaseGame):
             10 +
             info_content_height
         )
-    
-    def scroll_event(self):
-        content_height = self.get_content_height()
-
-        min_scroll = min(0, self.height - content_height)
-        max_scroll = 0
-
-        if self.scroll_y < min_scroll:
-            self.scroll_y = min_scroll
-        if self.scroll_y > max_scroll:
-            self.scroll_y = max_scroll
 
 
 
@@ -186,6 +190,7 @@ class SnakeGame(BaseGame):
         rect = self.game_rect.copy()
         rect.y += self.scroll_y
 
+        
         shadow = rect.copy()
         shadow.y += 6
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=5)
@@ -198,6 +203,7 @@ class SnakeGame(BaseGame):
         self.game_surface.fill((0, 0, 0))
 
         # render isi game
+        # super().draw(self.game_surface)
         self.scene.draw(self.game_surface)
 
         scaled_surface = pygame.transform.smoothscale(
@@ -211,7 +217,7 @@ class SnakeGame(BaseGame):
     def draw_header(self, screen):
         # shadow
         shadow = self.header_rect.copy()
-        shadow.y += 3
+        shadow.y += 1
         pygame.draw.rect(screen, (50, 50, 50), shadow)
 
         pygame.draw.rect(screen, (40, 40, 60), self.header_rect)
