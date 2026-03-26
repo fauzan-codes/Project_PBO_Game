@@ -25,11 +25,11 @@ class SnakeScene:
         self.score = 0
         self.level = "easy"
 
-        self.start_game("easy")
-
         self.start_time = 0
         self.elapsed_time = 0
         self.pause_time = 0
+
+        self.start_game("easy")
 
     def start_game(self, level):
         self.start_time = pygame.time.get_ticks()
@@ -38,21 +38,19 @@ class SnakeScene:
 
         self.level = level
         self.score = 0  
-
-        self.snake = Snake(self.grid_count, self.grid_count)
+        self.snake = Snake(self.grid_count, self.grid_count, level)
         self.food = Food(self.grid_count, self.grid_count)
+
+        self.snake.move_timer = 0
 
         self.game.objects.clear()
         self.game.objects += [self.snake, self.food]
 
         self.food.spawn(self.snake.body)
+        self.game.resume()
 
-        if level == "easy":
-            self.snake.move_delay = 12
-        elif level == "medium":
-            self.snake.move_delay = 8
-        else:
-            self.snake.move_delay = 6
+
+
 
     def handle_event(self, event, mouse_pos):
         self.mouse_pos = mouse_pos
@@ -173,13 +171,14 @@ class SnakeScene:
             current_time = pygame.time.get_ticks()
             self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
 
-            self.snake.update()
-
             # makan
             if self.snake.body[0] == self.food.position:
                 self.snake.eat()
                 self.food.spawn(self.snake.body)
                 self.score += 1
+
+                if self.score % 3 == 0:
+                    self.snake.increase_speed()
 
             # mati
             if self.snake.check_self_collision():
@@ -189,6 +188,7 @@ class SnakeScene:
                 # freeze time
                 current_time = pygame.time.get_ticks()
                 self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
+                self.snake = Snake(self.grid_count, self.grid_count, self.level)
                 self.snake.move_timer = 0
 
         elif self.state in ["home", "level"]:

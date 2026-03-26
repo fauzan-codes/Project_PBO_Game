@@ -17,7 +17,6 @@ class SnakeUI:
         self.hard = pygame.Rect(0, 0, 200, 60)
         self.hard.center = (width//2, height//2 + 160)
 
-        # pause buttons
         self.btn_resume = pygame.Rect(0, 0, 200, 60)
         self.btn_restart = pygame.Rect(0, 0, 200, 60)
         self.btn_home = pygame.Rect(0, 0, 200, 60)
