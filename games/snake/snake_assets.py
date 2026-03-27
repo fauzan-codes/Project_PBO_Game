@@ -20,9 +20,14 @@ class SnakeAssets:
         # ================= SOUND =================
         self.eat_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/eat.ogg"))
         self.die_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/die.wav"))
+        self.bgm_path = os.path.join(BASE_DIR, "../../assets/Snake/Aknotronic - Crystals.ogg")
 
         self.eat_sfx.set_volume(0.5)
-        self.die_sfx.set_volume(0.7)
+        self.die_sfx.set_volume(0.5)
+
+        pygame.mixer.music.load(self.bgm_path)
+        pygame.mixer.music.set_volume(0.3)  
+        pygame.mixer.music.play(-1)
 
 
 
@@ -97,3 +102,6 @@ class SnakeAssets:
 
     def play_die(self):
         self.die_sfx.play()
+
+    def set_bgm_volume(self, volume):
+        pygame.mixer.music.set_volume(volume)

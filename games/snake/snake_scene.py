@@ -62,6 +62,7 @@ class SnakeScene:
             if event.key == pygame.K_ESCAPE:
 
                 if self.state == "home":
+                    pygame.mixer.music.stop()
                     from scenes.game_select import GameSelect
                     self.game.game_manager.change_scene(GameSelect(self.game.game_manager))
 
@@ -173,6 +174,8 @@ class SnakeScene:
             current_time = pygame.time.get_ticks()
             self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
 
+            self.assets.set_bgm_volume(0.05) #sound volume
+
             # makan
             if self.snake.body[0] == self.food.position:
                 self.snake.eat()
@@ -197,8 +200,10 @@ class SnakeScene:
 
         elif self.state in ["home", "level"]:
             self.anim.update()
+            self.assets.set_bgm_volume(0.3)  
 
         elif self.state in ["pause", "game_over"]:
+            self.assets.set_bgm_volume(0.2)
             return
 
 

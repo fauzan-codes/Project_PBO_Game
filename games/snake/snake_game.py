@@ -1,6 +1,7 @@
 import pygame
 from core.base_game import BaseGame
 from games.snake.snake_scene import SnakeScene
+from games.snake.snake_assets import SnakeAssets
 
 class SnakeGame(BaseGame):
     def __init__(self, game_manager):
@@ -24,6 +25,7 @@ class SnakeGame(BaseGame):
 
         self.calculate_layout()
         self.scene = SnakeScene(self.game_width, self.game_height, self)
+        self.assets = SnakeAssets()
 
         # scroll
         self.scroll_y = 0
@@ -90,6 +92,7 @@ class SnakeGame(BaseGame):
 
             # button back
             if hasattr(self, "back_rect") and self.back_rect.collidepoint(mouse_pos):
+                pygame.mixer.music.stop()
                 from scenes.game_select import GameSelect
                 self.game_manager.change_scene(GameSelect(self.game_manager))
 
