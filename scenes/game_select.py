@@ -8,13 +8,43 @@ class GameSelect:
         self.title_font = pygame.font.Font(None, 60)
 
         self.games = [
-            {"name": "Snake ini uler cuy", "class": SnakeGame},
-            {"name": "Flappy", "class": None},
-            {"name": "Game 3", "class": None},
-            {"name": "Game 4", "class": None},
-            {"name": "Game 5", "class": None},
-            {"name": "Game 6", "class": None},
+            {
+                "name": "Classic Snake",
+                "class": SnakeGame,
+                "image": "assets/Snake/Snake_poster.png"
+            },
+            {
+                "name": "Flappy", 
+                "class": None, 
+                "image": None
+            },
+            {
+                "name": "Game 3", 
+                "class": None, 
+                "image": None
+            },
+            {
+                "name": "Game 4", 
+                "class": None, 
+                "image": None
+            },
+            {
+                "name": "Game 5", 
+                "class": None, 
+                "image": None
+            },
         ]
+
+
+        # load img
+        self.loaded_images = []
+        for game in self.games:
+            if game["image"]:
+                img = pygame.image.load(game["image"]).convert()
+                self.loaded_images.append(img)
+            else:
+                self.loaded_images.append(None)
+
 
         self.selected = 0
         self.card_rects = []
@@ -69,17 +99,14 @@ class GameSelect:
         screen_width = screen.get_width()
 
     
-        # ===== TITLE ===== 
+        # title
         title = self.title_font.render("SELECT GAME", True, (255, 255, 255))
         title_rect = title.get_rect(center=(screen_width // 2, 80))
         screen.blit(title, title_rect)
 
         mouse_pos = pygame.mouse.get_pos()
 
-   
-        # ===== GRID CONFIG ===== 
         cols = 3
-
         card_width = 200
         card_height = 230
 
@@ -93,7 +120,7 @@ class GameSelect:
         self.card_rects = []
 
 
-        # ===== DRAW CARDS ===== 
+        # card
         for i, game in enumerate(self.games):
             row = i // cols
             col = i % cols
@@ -118,20 +145,54 @@ class GameSelect:
             shadow = rect.copy()
             shadow.y += 5
             pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
-
-            # card background
             pygame.draw.rect(screen, color, rect, border_radius=15)
 
      
-            # ===== IMAGE AREA (placeholder) ===== 
+            # ===== IMAGE AREA =====
             image_rect = pygame.Rect(x, y, card_width, image_height)
-            pygame.draw.rect(screen, (100, 100, 120), image_rect, border_top_left_radius=15, border_top_right_radius=15)
+            img = self.loaded_images[i]
+
+            if img:
+                img_width, img_height = img.get_size()
+
+                target_ratio = 4 / 3 # rasio 4:3
+                current_ratio = img_width / img_height
+
+                if current_ratio > target_ratio:
+                    new_width = int(img_height * target_ratio)
+                    crop_x = (img_width - new_width) // 2
+                    img_cropped = img.subsurface((crop_x, 0, new_width, img_height))
+                else:
+                    new_height = int(img_width / target_ratio)
+                    crop_y = (img_height - new_height) // 2
+                    img_cropped = img.subsurface((0, crop_y, img_width, new_height))
+
+                img_scaled = pygame.transform.smoothscale(img_cropped, (card_width, image_height))
+                img_scaled = pygame.transform.smoothscale(img_cropped, (card_width, image_height))
+
+                mask_surface = pygame.Surface((card_width, image_height), pygame.SRCALPHA)
+
+                pygame.draw.rect(
+                    mask_surface,
+                    (255, 255, 255),
+                    mask_surface.get_rect(),
+                    border_top_left_radius=15,
+                    border_top_right_radius=15
+                )
+
+                final_image = pygame.Surface((card_width, image_height), pygame.SRCALPHA)
+                final_image.blit(img_scaled, (0, 0))
+                final_image.blit(mask_surface, (0, 0), special_flags=pygame.BLEND_RGBA_MIN)
+
+                screen.blit(final_image, (x, y))
+            else:
+                pygame.draw.rect(screen, (100, 100, 120), image_rect)
 
      
-            # ===== TITLE AREA (2 BARIS) ===== 
+
+            # ===== TITLE AREA ===== 
             title_area = pygame.Rect(x, y + image_height, card_width, card_height - image_height)
 
-            # split text jadi max 2 baris
             words = game["name"].split(" ")
             line1 = ""
             line2 = ""

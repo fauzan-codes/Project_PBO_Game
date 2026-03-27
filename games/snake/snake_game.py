@@ -109,7 +109,7 @@ class SnakeGame(BaseGame):
 
             self.scroll_event()
 
-        # ambil posisi mouse relatif ke game area
+        # posisi mouse di game area
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mx, my = pygame.mouse.get_pos()
 
@@ -118,7 +118,6 @@ class SnakeGame(BaseGame):
             inner_rect.y += self.scroll_y
 
             if inner_rect.collidepoint(mx, my):
-                # ubah ke koordinat game_surface
                 rel_x = (mx - inner_rect.x) * (self.game_width / inner_rect.width)
                 rel_y = (my - inner_rect.y) * (self.game_height / inner_rect.height)
 
@@ -136,7 +135,6 @@ class SnakeGame(BaseGame):
                 rel_y = (my - inner_rect.y) * (self.game_height / inner_rect.height)
                 rel_mouse = (rel_x, rel_y)
 
-            # kirim ke scene SEMUA EVENT
             self.scene.handle_event(event, rel_mouse)
 
     def scroll_event(self):
@@ -199,11 +197,7 @@ class SnakeGame(BaseGame):
         pygame.draw.rect(screen, (200, 200, 200), rect, border_radius=5)
         inner_rect = rect.inflate(-10, -10)
 
-        # game ke surface
         self.game_surface.fill((0, 0, 0))
-
-        # render isi game
-        # super().draw(self.game_surface)
         self.scene.draw(self.game_surface)
 
         scaled_surface = pygame.transform.smoothscale(
@@ -215,11 +209,9 @@ class SnakeGame(BaseGame):
 
     # ==================== HEADER ====================
     def draw_header(self, screen):
-        # shadow
         shadow = self.header_rect.copy()
         shadow.y += 1
         pygame.draw.rect(screen, (50, 50, 50), shadow)
-
         pygame.draw.rect(screen, (40, 40, 60), self.header_rect)
 
         # title
@@ -277,24 +269,24 @@ class SnakeGame(BaseGame):
 
     def _get_info_text(self):
         return [
-            "Snake Game",
             "",
-            "- Gunakan WASD / Arrow",
-            "- Makan makanan untuk score",
-            "- Jangan makan diri sendiri",
-            "- Tembus tembok",
+            "--- CARA BERMAIN ---",
+            "• Gerakan: Gunakan Tombol ARROW atau WASD pada Keyboard",
+            "• Pause    : Tekan ESC saat bermain",
+            "• Restart   : Tekan R saat mode Pause atau Game Over",
             "",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen",
-            "Press F untuk fullscreen"
+            "--- ATURAN GAME ---",
+            "• Makan kelinci untuk menambah skor dan panjang tubuh.",
+            "• Game Over jika kepala menabrak tubuh sendiri.",
+            "• Anda Bisa menembus tembok",
+            "",
+            "--- INFORMASI LEVEL ---",
+            "• EASY     : Gerakan lambat, cocok untuk santai.",
+            "• MEDIUM : Kecepatan standar, tantangan mulai terasa.",
+            "• HARD     : Gerakan sangat cepat, butuh reaksi tinggi!",
+            "",
+            "",
+            "Design by: Fauzan Adhim Muntazhar (003) TIA25"
         ]
 
     # ==================== FULLSCREEN SYSTEM ====================

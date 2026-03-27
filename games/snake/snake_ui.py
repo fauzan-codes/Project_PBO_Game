@@ -6,7 +6,7 @@ class SnakeUI:
         self.height = height
 
         self.font_big = pygame.font.Font(None, 80)
-        self.font = pygame.font.Font(None, 40)
+        self.font = pygame.font.Font(None, 35)
 
         self.easy = pygame.Rect(0, 0, 200, 60)
         self.easy.center = (width//2, height//2)
@@ -37,7 +37,6 @@ class SnakeUI:
 
 
     def draw_side_panel(self, surface, x, y, width, height, score, level, time_played):
-        # background
         pygame.draw.rect(surface, (40,40,60), (x, y, width, height), border_radius=10)
 
         # title
@@ -58,13 +57,6 @@ class SnakeUI:
 
         time_text = self.font.render(f"Time: {minutes:02}:{seconds:02}", True, (255,255,255))
         surface.blit(time_text, (x+20, y+140))
-
-        # controls
-        # ctrl = self.font.render("WASD Move", True, (200,200,200))
-        # esc = self.font.render("ESC Pause", True, (200,200,200))
-
-        # surface.blit(ctrl, (x+20, y+160))
-        # surface.blit(esc, (x+20, y+190))
 
     def draw_pause_menu(self, surface, mouse_pos):
         overlay = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
@@ -92,10 +84,11 @@ class SnakeUI:
         seconds = time_played % 60
 
         time_text = self.font.render(f"Time : {minutes:02}:{seconds:02}", True, (255,255,255))
-        surface.blit(time_text, (self.width//2 - 80, 300))
+        score_x = self.width // 2 - score_text.get_width() // 2
+        time_x = self.width // 2 - time_text.get_width() // 2
 
-        surface.blit(score_text, (self.width//2 - 80, 250))
-        surface.blit(time_text, (self.width//2 - 80, 300))
+        surface.blit(score_text, (score_x, 250))
+        surface.blit(time_text, (time_x, 300))
 
         # buttons
         self.draw_button(surface, self.btn_restart, "RESTART", mouse_pos)

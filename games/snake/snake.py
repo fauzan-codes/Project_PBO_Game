@@ -76,15 +76,15 @@ class Snake(GameObject):
     
 
     def setup_level(self):
-        if self.level == "easy":
+        if self.level == "Easy":
             self.move_delay = 12
             self.min_delay = 12   
 
-        elif self.level == "medium":
+        elif self.level == "Medium":
             self.move_delay = 12
             self.min_delay = 6    
 
-        elif self.level == "hard":
+        elif self.level == "Hard":
             self.move_delay = 8
             self.min_delay = 4    
 
