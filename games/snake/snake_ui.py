@@ -6,6 +6,7 @@ class SnakeUI:
         self.height = height
 
         self.font_big = pygame.font.Font(None, 80)
+        self.font_medium = pygame.font.Font(None, 55)
         self.font = pygame.font.Font(None, 35)
 
         self.easy = pygame.Rect(0, 0, 200, 60)

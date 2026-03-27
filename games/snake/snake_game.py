@@ -281,9 +281,9 @@ class SnakeGame(BaseGame):
             "• Anda Bisa menembus tembok",
             "",
             "--- INFORMASI LEVEL ---",
-            "• EASY     : Gerakan lambat, cocok untuk santai.",
-            "• MEDIUM : Kecepatan standar, tantangan mulai terasa.",
-            "• HARD     : Gerakan sangat cepat, butuh reaksi tinggi!",
+            "• EASY     : Gerakan lambat dan tetap.",
+            "• MEDIUM : Kecepatan standar, bertambah jika score tinggi.",
+            "• HARD     : Gerakan sangat cepat, akan semakin cepat lagi",
             "",
             "",
             "Design by: Fauzan Adhim Muntazhar (003) TIA25"

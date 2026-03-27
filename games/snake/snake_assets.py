@@ -17,6 +17,15 @@ class SnakeAssets:
         self.frame_index = 0
         self.timer = 0
 
+        # ================= SOUND =================
+        self.eat_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/eat.ogg"))
+        self.die_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/die.wav"))
+
+        self.eat_sfx.set_volume(0.5)
+        self.die_sfx.set_volume(0.7)
+
+
+
     def slice(self, image):
         tiles = []
         for y in range(0, image.get_height(), self.size):
@@ -80,3 +89,11 @@ class SnakeAssets:
 
     def get_bg(self): #background
         return self.tiles1[15]
+    
+
+    # ================= SOUND =================
+    def play_eat(self):
+        self.eat_sfx.play()
+
+    def play_die(self):
+        self.die_sfx.play()

@@ -1,4 +1,6 @@
 import pygame
+import math
+
 from games.snake.snake_assets import SnakeAssets
 from games.snake.snake import Snake
 from games.snake.food import Food
@@ -175,13 +177,15 @@ class SnakeScene:
             if self.snake.body[0] == self.food.position:
                 self.snake.eat()
                 self.food.spawn(self.snake.body)
+                self.assets.play_eat()
                 self.score += 1
 
                 if self.score % 3 == 0:
                     self.snake.increase_speed()
 
             # mati
-            if self.snake.check_self_collision():
+            if self.snake.check_self_collision() and self.state == "play":
+                self.assets.play_die()
                 self.state = "game_over"
                 self.game.pause()
 
@@ -232,8 +236,11 @@ class SnakeScene:
             title = self.ui.font_big.render("SNAKE", True, (255,255,0))
             surface.blit(title, (self.width//2 - title.get_width()//2, 80))
 
-            text = self.ui.font.render("CLICK TO START", True, (255,255,255))
-            surface.blit(text, (self.width//2 - text.get_width()//2, self.height - 100))
+            alpha = int((math.sin(pygame.time.get_ticks() * 0.004) + 1) * 105)
+            text = self.ui.font_medium.render("CLICK TO START", True, (255,255,255))
+            text = text.convert_alpha()
+            text.set_alpha(alpha)
+            surface.blit(text, (self.width//2 - text.get_width()//2, self.height - 150))
 
         # ===== LEVEL UI =====
         elif self.state == "level":
