@@ -281,7 +281,7 @@ class SnakeGame(BaseGame):
             "--- ATURAN GAME ---",
             "• Makan kelinci untuk menambah skor dan panjang tubuh.",
             "• Game Over jika kepala menabrak tubuh sendiri.",
-            "• Anda Bisa menembus tembok",
+            "• Bisa menembus tembok",
             "",
             "--- INFORMASI LEVEL ---",
             "• EASY     : Gerakan lambat dan tetap.",
