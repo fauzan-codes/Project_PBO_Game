@@ -1,3 +1,4 @@
+# # Project_PBO_Game\core\base_game.py
 class BaseGame:
     def __init__(self):
         self.is_running = True

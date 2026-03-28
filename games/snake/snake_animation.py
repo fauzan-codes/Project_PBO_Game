@@ -1,3 +1,4 @@
+# Project_PBO_Game\games\snake\snake_animation.py
 class SnakeAnimation:
     def __init__(self, width, height):
         self.width = width

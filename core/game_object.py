@@ -1,3 +1,4 @@
+# # Project_PBO_Game\core\game_object.py
 class GameObject:
     def __init__(self, x, y):
         self.x = x
