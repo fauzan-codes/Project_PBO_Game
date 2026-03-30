@@ -12,27 +12,27 @@ class GameSelect:
             {
                 "name": "Classic Snake",
                 "class": SnakeGame,
-                "image": "assets/Snake/Snake_poster.png"
+                "image": "Snake_poster.png"
             },
             {
                 "name": "Flappy", 
                 "class": None, 
-                "image": None
+                "image": "img-tes.png"
             },
             {
                 "name": "Game 3", 
                 "class": None, 
-                "image": None
+                "image": "img-tes.png"
             },
             {
                 "name": "Game 4", 
                 "class": None, 
-                "image": None
+                "image": "img-tes.png"
             },
             {
                 "name": "Game 5", 
                 "class": None, 
-                "image": None
+                "image": "img-tes.png"
             },
         ]
 
@@ -41,7 +41,7 @@ class GameSelect:
         self.loaded_images = []
         for game in self.games:
             if game["image"]:
-                img = pygame.image.load(game["image"]).convert()
+                img = self.game_manager.asset.load_image(game["image"])
                 self.loaded_images.append(img)
             else:
                 self.loaded_images.append(None)
@@ -49,6 +49,8 @@ class GameSelect:
 
         self.selected = 0
         self.card_rects = []
+
+        self.game_manager.asset.play_random_music(volume=0.3)
 
 
     # ===== HANDLE EVENT =====
@@ -86,11 +88,13 @@ class GameSelect:
     def start_game(self, index):
         game_class = self.games[index]["class"]
         if game_class:
+            self.game_manager.asset.stop_music()
+
             game = game_class(self.game_manager)
             self.game_manager.change_scene(game)
 
     def update(self):
-        pass
+        self.game_manager.asset.update_music()
 
 
     # ===== DRAW UI ===== 

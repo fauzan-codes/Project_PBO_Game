@@ -1,8 +1,11 @@
 # Project_PBO_Game\game_manager.py
 import pygame
+from core.asset_manager import AssetManager
 
 class GameManager:
     def __init__(self):
+        self.asset = AssetManager()
+
         self.current_scene = None
         self.current_game = None
 

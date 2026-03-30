@@ -8,6 +8,7 @@ class Home:
         self.small_font = pygame.font.Font(None, 40)
 
         self.selected = 0  # 0 = play, 1 = quit
+        self.game_manager.asset.play_random_music(volume=0.3)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -38,7 +39,7 @@ class Home:
                 exit()
 
     def update(self):
-        pass
+        self.game_manager.asset.update_music()
 
     def draw(self, screen):
         screen.fill((30, 30, 40))
