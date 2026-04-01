@@ -1,6 +1,7 @@
 # # Project_PBO_Game\scene\game_select.py
 import pygame
 from games.snake.snake_game import SnakeGame
+from games.flappy.flappy_game import FlappyGame
 
 class GameSelect:
     def __init__(self, game_manager):
@@ -15,9 +16,9 @@ class GameSelect:
                 "image": "Snake_poster.png"
             },
             {
-                "name": "Flappy", 
-                "class": None, 
-                "image": "img-tes.png"
+                "name": "Flappy Bird", 
+                "class": FlappyGame, 
+                "image": "Snake_poster.png"
             },
             {
                 "name": "Game 3", 

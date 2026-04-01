@@ -14,8 +14,14 @@ pygame.init()
 WIDTH = 1024
 HEIGHT = 768
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+MIN_WIDTH = 1000
+MIN_HEIGHT = 680
+
+# screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Game Collection PBO")
+
+game_canvas = pygame.Surface((WIDTH, HEIGHT))
 
 clock = pygame.time.Clock()
 
@@ -30,11 +36,11 @@ running = True
 while running:
     screen.fill((0, 0, 0))
 
-    # HANDLE EXIT GAME
+
     if game_manager.current_game and not game_manager.current_game.is_running:
         game_manager.unload_game()
 
-    # PILIH YANG AKTIF
+
     if game_manager.current_game:
         current = game_manager.current_game
     else:
@@ -47,6 +53,17 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        if event.type == pygame.VIDEORESIZE:
+            new_width = max(MIN_WIDTH, event.w)
+            new_height = max(MIN_HEIGHT, event.h)
+
+            screen = pygame.display.set_mode((new_width, new_height), pygame.RESIZABLE)
+
+            # print(f"[RESIZE]: {new_width}x{new_height}")
+
+            if game_manager.current_game:
+                game_manager.current_game.update_screen_size()
+
         if not game_manager.is_transitioning:
             current.handle_event(event)
 
@@ -54,8 +71,8 @@ while running:
     current.draw(screen)
 
     # TRANSITION
-    game_manager.update_transition() # Update transition
-    game_manager.draw_transition(screen) # draw transition (overlay)
+    game_manager.update_transition() 
+    game_manager.draw_transition(screen)
 
     pygame.display.flip()
     clock.tick(60)
