@@ -79,3 +79,9 @@ class AssetManager:
 
     def set_volume(self, volume):
         pygame.mixer.music.set_volume(volume)
+
+    def fade_out_music(self, duration):
+        if pygame.mixer.music.get_busy():
+            pygame.mixer.music.fadeout(duration)
+        self.is_playing = False 
+        self.waiting = False

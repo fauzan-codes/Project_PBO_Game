@@ -32,6 +32,7 @@ class SnakeScene:
         self.elapsed_time = 0
         self.pause_time = 0
 
+        self.music_started = False
         self.start_game("easy")
 
     def start_game(self, level):
@@ -87,7 +88,8 @@ class SnakeScene:
         # ================= HOME =================
         if self.state == "home":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                self.state = "level"
+                if mouse_pos:
+                    self.state = "level"
 
         # ================= LEVEL =================
         elif self.state == "level":
@@ -169,6 +171,13 @@ class SnakeScene:
 
     def update(self):
         self.assets.update()
+
+        current_time = pygame.time.get_ticks()
+        if not self.music_started:
+            if current_time - self.start_time >= 1500:
+                pygame.mixer.music.load(self.assets.bgm_path)
+                pygame.mixer.music.play(-1)
+                self.music_started = True
 
         # ================= PLAY =================
         if self.state == "play":

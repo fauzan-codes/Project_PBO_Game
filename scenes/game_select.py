@@ -79,26 +79,24 @@ class GameSelect:
                 if rect.collidepoint(mouse_pos):
                     self.start_game(i)
 
-            # klik back
             if self.back_rect.collidepoint(mouse_pos):
                 from scenes.home import Home
                 self.game_manager.change_scene(Home(self.game_manager))
 
 
-    # ===== START GAME ===== 
+
     def start_game(self, index):
         game_class = self.games[index]["class"]
         if game_class:
-            self.game_manager.asset.stop_music()
-
+            # self.game_manager.asset.fade_out_music(500) #stop music
             game = game_class(self.game_manager)
-            self.game_manager.change_scene(game)
+            self.game_manager.change_scene(game, fade_music=True)
 
     def update(self):
         self.game_manager.asset.update_music()
 
 
-    # ===== DRAW UI ===== 
+    # ===== UI =====
     def draw(self, screen):
         screen.fill((30, 30, 40))
 
@@ -147,14 +145,13 @@ class GameSelect:
             elif i == self.selected: # Keyboard hover
                 color = (255, 255, 0)
 
-            # shadow
             shadow = rect.copy()
             shadow.y += 5
             pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
             pygame.draw.rect(screen, color, rect, border_radius=15)
 
      
-            # ===== IMAGE AREA =====
+            # img
             image_rect = pygame.Rect(x, y, card_width, image_height)
             img = self.loaded_images[i]
 
@@ -196,9 +193,8 @@ class GameSelect:
 
      
 
-            # ===== TITLE AREA ===== 
+            # title area
             title_area = pygame.Rect(x, y + image_height, card_width, card_height - image_height)
-
             words = game["name"].split(" ")
             line1 = ""
             line2 = ""
@@ -222,13 +218,10 @@ class GameSelect:
             if i == self.selected:
                 pygame.draw.rect(screen, (255, 255, 0), rect, 4, border_radius=15)
 
-        # ===== BACK BUTTON ===== 
+        # back button
         self.back_rect = pygame.Rect(30, screen.get_height() - 70, 120, 40)
-
         back_color = (255, 255, 0) if self.back_rect.collidepoint(mouse_pos) else (200, 200, 200)
-
         pygame.draw.rect(screen, back_color, self.back_rect, border_radius=10)
-
         back_text = self.font.render("BACK", True, (0, 0, 0))
         back_text_rect = back_text.get_rect(center=self.back_rect.center)
         screen.blit(back_text, back_text_rect)

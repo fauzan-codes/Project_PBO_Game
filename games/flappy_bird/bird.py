@@ -38,9 +38,6 @@ class Bird:
     def jump(self):
         self.velocity = self.jump_power
 
-    def idle_jump(self):
-        self.velocity = -5
-
     # ================= DRAW =================
     def draw(self, screen):
         if self.dead:

@@ -96,13 +96,18 @@ class FlappyScene:
 
         # MOUSE
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            mouse_pos = pygame.mouse.get_pos()
+            if rel_mouse is None:
+                return
+            
+            mouse_pos = rel_mouse
 
             if self.pause:
-                if hasattr(self.ui, "resume_rect") and self.ui.resume_rect.collidepoint(mouse_pos):
-                    self.pause = False
-                elif hasattr(self.ui, "restart_rect") and self.ui.restart_rect.collidepoint(mouse_pos):
-                    self.reset()
+                # if hasattr(self.ui, "resume_rect") and self.ui.resume_rect.collidepoint(mouse_pos):
+                #     self.state = "PLAYING"
+                #     self.bird.jump()
+                #     self.assets.sfx_wing.play()
+                # elif hasattr(self.ui, "restart_rect") and self.ui.restart_rect.collidepoint(mouse_pos):
+                #     self.reset()
                 return
 
             if self.state == "GAME_OVER":
@@ -164,14 +169,17 @@ class FlappyScene:
 
             # SPAWN PIPE
             self.spawn_timer += 1
-            spawn_delay = 80
+            # spawn_delay = 80
+            # spawn_delay = max(50, 80 - self.score // 2)  #berdasarkan score
+            spawn_delay = random.randint(80, 110)  #random pipe
 
             if self.spawn_timer > spawn_delay:
                 self.spawn_timer = 0
 
                 height = random.randint(100, self.ground_y - 250)
                 pipe = Pipe(self.width, height, self.assets, self.ground_y)
-                pipe.gap = 140
+                # pipe.gap = 140
+                pipe.gap = max(110, 140 - self.score)
 
                 self.pipes.append(pipe)
 

@@ -6,7 +6,3 @@ class FlappyAnimation:
 
     def update(self):
         self.offset += 0.5
-
-    def get_idle_offset(self):
-        import math
-        return math.sin(self.offset) * 10

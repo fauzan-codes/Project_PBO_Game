@@ -28,10 +28,10 @@ class SnakeAssets:
 
         pygame.mixer.music.load(self.bgm_path)
         pygame.mixer.music.set_volume(0.3)  
-        pygame.mixer.music.play(-1)
+        # pygame.mixer.music.play(-1)
 
 
-
+    # assets img snake
     def slice(self, image):
         tiles = []
         for y in range(0, image.get_height(), self.size):
@@ -49,7 +49,6 @@ class SnakeAssets:
     def get_tiles(self):
         return self.tiles1 if self.frame_index == 0 else self.tiles2
 
-    # ================== GET SPRITES ==================
 
     def get_head(self, direction): # kepala
         tiles = self.get_tiles()
@@ -97,7 +96,7 @@ class SnakeAssets:
         return self.tiles1[15]
     
 
-    # ================= SOUND =================
+    # sound
     def play_eat(self):
         self.eat_sfx.play()
 

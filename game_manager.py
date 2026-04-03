@@ -22,11 +22,15 @@ class GameManager:
     def unload_game(self):
         self.current_game = None
 
-    def change_scene(self, new_scene):
+    def change_scene(self, new_scene, fade_music=False):
         self.is_transitioning = True
         self.transition_mode = "out"
         self.transition_alpha = 0
         self.next_scene = new_scene
+        
+        if fade_music:
+            self.asset.fade_out_music(500)
+
 
     def update_transition(self):
         if not self.is_transitioning:

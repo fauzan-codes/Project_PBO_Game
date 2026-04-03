@@ -158,7 +158,8 @@ class BaseGame:
         if hasattr(self, "scene") and self.scene:
             self.scene.draw(self.game_surface)
 
-        scaled = pygame.transform.smoothscale(
+        # scaled = pygame.transform.smoothscale(
+        scaled = pygame.transform.scale(
             self.game_surface,
             (inner_rect.width, inner_rect.height)
         )

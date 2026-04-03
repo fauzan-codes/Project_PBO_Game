@@ -53,5 +53,9 @@ class FlappyUI:
         text1 = font_small.render("Press SPACE to Continue", True, (255,255,255))
         text2 = font_small.render("Press R to Restart", True, (255,255,255))
 
+        # resume_img = pygame.transform.scale(self.assets.resume, (200, 80))
+        # self.resume_rect = resume_img.get_rect(center=(self.width//2, 350))
+        # screen.blit(resume_img, self.resume_rect)
+
         screen.blit(text1, text1.get_rect(center=(self.width//2, 320)))
         screen.blit(text2, text2.get_rect(center=(self.width//2, 360)))

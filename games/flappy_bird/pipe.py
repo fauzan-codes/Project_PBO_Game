@@ -11,7 +11,6 @@ class Pipe:
         self.height = height
         self.width = self.assets.pipe.get_width()
         self.gap = 150
-        self.min_height = 50
         self.speed = 3
 
 
