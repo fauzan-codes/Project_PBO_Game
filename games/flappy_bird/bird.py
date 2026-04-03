@@ -1,4 +1,5 @@
 import pygame
+import math
 
 class Bird:
     def __init__(self, x, y, assets):
@@ -20,18 +21,25 @@ class Bird:
         self.velocity += self.gravity
         self.y += self.velocity
 
+        if self.y < 0:
+            self.y = 0
+            self.velocity = 0
+
         self.image = self.assets.get_bird()
 
-    # ================= IDLE (MENU ANIMATION) =================
+    # ================= IDLE =================
     def update_idle(self):
-        # efek naik turun kecil
-        self.y += (pygame.time.get_ticks() % 1000 - 500) * 0.0005
-
+        self.y += math.sin(pygame.time.get_ticks() * 0.005) * 0.5
         self.image = self.assets.get_bird()
+        # self.image = self.assets.get_bird()
+
 
     # ================= JUMP =================
     def jump(self):
         self.velocity = self.jump_power
+
+    def idle_jump(self):
+        self.velocity = -5
 
     # ================= DRAW =================
     def draw(self, screen):

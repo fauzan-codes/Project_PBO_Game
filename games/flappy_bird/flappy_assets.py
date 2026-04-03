@@ -43,8 +43,12 @@ class FlappyAssets:
             os.path.join(BASE_DIR, "../../assets/FlappyBird/flappybird-text.png")
         )
 
-        self.arrow = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/arrow.png")
+        self.restart = pygame.image.load(
+            os.path.join(BASE_DIR, "../../assets/FlappyBird/restart.png")
+        )
+
+        self.resume = pygame.image.load(
+            os.path.join(BASE_DIR, "../../assets/FlappyBird/resume.png")
         )
 
         self.bird_die = pygame.image.load(

@@ -21,12 +21,11 @@ class Pipe:
 
     def draw(self, screen):
         pipe_img = self.assets.pipe
-
         bottom_y = self.height + self.gap
         if bottom_y > self.ground_y - 50:
             bottom_y = self.ground_y - 50
 
-        # atas (dibalik)
+        # atas
         top_pipe = pygame.transform.flip(pipe_img, False, True)
         screen.blit(top_pipe, (self.x, self.height - pipe_img.get_height()))
 
