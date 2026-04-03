@@ -1,6 +1,7 @@
+# .\games\flappy_bird\flappy_game.py
 import pygame
 from core.base_game import BaseGame
-from games.flappy.flappy_scene import FlappyScene
+from games.flappy_bird.flappy_scene import FlappyScene
 
 class FlappyGame(BaseGame):
     def __init__(self, game_manager):

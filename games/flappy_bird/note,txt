@@ -1,0 +1,42 @@
+games/flappy_bird/
+│
+├── flappy_game.py
+├── flappy_scene.py
+├── bird.py
+├── pipe.py
+├── flappy_assets.py
+├── flappy_renderer.py   
+├── flappy_ui.py         
+├── flappy_animation.py  (nanti saja)
+
+select game flappy bird > tampilan flappy_game.py dan di game area ada home game flappy bird > klick di mana saja baru masuk ke gameplay permainan dan space untuk memulai gamenya.
+
+
+1. Fitur Utama (Core Mechanics)
+Sistem Gravitasi & Jump: Burung memiliki simulasi gravitasi yang terus menariknya ke bawah, dan pemain bisa memberikan gaya lawan (loncatan) dengan menekan tombol SPACE.
+Collision Detection (Deteksi Tabrakan): Game secara akurat mendeteksi jika burung menabrak pipa atas, pipa bawah, atau menyentuh batas layar (langit dan tanah).
+State Management: Memiliki sistem status permainan yang jelas: WAITING (tampilan awal), PLAYING (saat bermain), dan GAME_OVER (saat kalah).
+Sistem Scoring: Skor bertambah secara otomatis setiap kali burung berhasil melewati koordinat horizontal sebuah pipa.
+rasio layar 4/3 jadi bg mengulang hingga mngisi full layar 4/3.
+
+2. Fitur Dinamis (Gameplay Scalability)
+Dynamic Difficulty (Tingkat Kesulitan Meningkat): * Kecepatan Pipa: Semakin tinggi skor, pipa akan bergerak semakin cepat.
+Celah Pipa Menyempit: Jarak antara pipa atas dan bawah akan semakin sempit seiring bertambahnya skor, membuat game semakin menantang.
+Randomized Pipe Height: Tinggi pipa atas digenerasi secara acak menggunakan random.randint(50, 250), sehingga tantangan di setiap rintangan selalu berbeda.
+Randomized Spawn Delay: Jarak antar pipa (jarak horizontal) tidak kaku; game menggunakan interval acak antara 80 hingga 110 frame untuk memunculkan pipa baru.
+
+3. Fitur Teknis & UX (User Experience)
+Object-Oriented Programming (OOP) Structure: Menggunakan konsep inheritance (pewarisan) di mana class Bird mewarisi sifat dari GameObject, memudahkan pengembangan ke depannya.
+Memory Management: Memiliki sistem pembersihan objek (self.pipes = [p for p in self.pipes if p.x + p.width > 0]). Pipa yang sudah keluar dari layar akan dihapus dari memori agar game tidak berat (anti-lag).
+Input Serbaguna: Game mendukung input dari keyboard (SPACE) dan klik mouse kiri untuk melompat dan saat game over atau pause bisa pakai klik mouse (kiri) khusus untuk melakukan restart setelah Game Over ataupun bisa tekan keyboard (R untuk restar dan h untuk kembali ke home).
+Reset Functionality: Fungsi reset() mengembalikan semua variabel ke kondisi awal tanpa harus menutup dan membuka kembali aplikasi.
+Pause: saat game berjalan klik esc untuk pause dan game berhenti(ada resume, restart, home), saat klik resume game masih berhenti klik space untuk melanjutkan gamenya
+gameover: saat mati atau gameover burung menjadi gray/bird-die.png lalu ada sedikit delay untuk menampilkan menu game over (teks gameover, restart dan home)
+
+4. Fitur Visual & Informasi
+Real-time Score Display: Menampilkan skor di atas tengah secara terus-menerus.
+Instruksi Layar: Menampilkan teks panduan seperti "Press SPACE to Start" dan "Click to Restart" sesuai dengan kondisi permainan.
+ada home untuk awalan dan teks (click to start) dan baru masuk ke gamenya tapi untuk mulai juga harus space baru mulai gameplaynya
+
+
+di assets/FlappyBird ada file ini background.png, bird-downflap.png, bird-midflap.png, bird-upflap.png (3 bird ini bedanya cuman sayap burungnya aja) dan bird-die.png. pipe.png, ground.png(intinya buat lantai atau bawahnya), dan untuk tampilan teksnya ada gameover.png, tap.png(tap dan ada icon jari tap layar), flappybird-text.png, getready-text.png, flappybird-text.png, dan terakhir ada object arrow(arahnya ke atas). untuk yg 5 vertikal tersusun ini jika butuh penjelasan lebih lengkap lagi bilang saja ataupun penjelasan object atau assets lainnya. untuk sfx ada die.ogg, hit.ogg, swoosh.ogg, wing.ogg. dan terakhir ada folder numbers(yg isinya teks tyle untuk number) 0.png, 1.png.... hingga 9.png. tolong penjelasannya yg jelas yah seperti dimana file mana class mana bagian mana kode mana jika ingin di rubah ataupun taruh mana jika di tambahkan dan kodenya seperti apa, dll

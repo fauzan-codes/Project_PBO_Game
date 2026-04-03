@@ -8,7 +8,7 @@ import pygame
 from game_manager import GameManager
 from scenes.home import Home
 
-
+pygame.mixer.init()
 pygame.init()
 
 WIDTH = 1024

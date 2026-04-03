@@ -1,7 +1,7 @@
-# # Project_PBO_Game\scene\game_select.py
+# .\scene\game_select.py
 import pygame
 from games.snake.snake_game import SnakeGame
-from games.flappy.flappy_game import FlappyGame
+from games.flappy_bird.flappy_game import FlappyGame
 
 class GameSelect:
     def __init__(self, game_manager):
