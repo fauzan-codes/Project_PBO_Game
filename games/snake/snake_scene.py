@@ -59,7 +59,7 @@ class SnakeScene:
     def handle_event(self, event, mouse_pos):
         self.mouse_pos = mouse_pos
 
-        # ================= GLOBAL ESC =================
+        # escape
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
 
@@ -74,24 +74,20 @@ class SnakeScene:
                 elif self.state == "play":
                     self.state = "pause"
                     self.pause_start = pygame.time.get_ticks()
-
                     self.game.pause()
 
                 elif self.state == "pause":
                     self.state = "play"
                     self.pause_time += pygame.time.get_ticks() - self.pause_start
-
                     self.game.resume()
-
                 return 
 
-        # ================= HOME =================
+
         if self.state == "home":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if mouse_pos:
                     self.state = "level"
 
-        # ================= LEVEL =================
         elif self.state == "level":
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if mouse_pos:
@@ -107,7 +103,6 @@ class SnakeScene:
                         self.start_game("Hard")
                         self.state = "play"
 
-        # ================= PLAY =================
         elif self.state == "play":
             if event.type == pygame.KEYDOWN:
 
@@ -125,7 +120,6 @@ class SnakeScene:
                 if event.key in dirs:
                     self.snake.set_direction(dirs[event.key])
 
-        # ================= PAUSE =================
         elif self.state == "pause":
             if event.type == pygame.KEYDOWN:
 
@@ -136,7 +130,7 @@ class SnakeScene:
                 elif event.key == pygame.K_h:
                     self.state = "home"
 
-            # mouse button pause
+            # mouse
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if self.mouse_pos:
                     if self.ui.btn_resume.collidepoint(self.mouse_pos):
@@ -179,11 +173,10 @@ class SnakeScene:
                 pygame.mixer.music.play(-1)
                 self.music_started = True
 
-        # ================= PLAY =================
+
         if self.state == "play":
             current_time = pygame.time.get_ticks()
             self.elapsed_time = (current_time - self.start_time - self.pause_time) // 1000
-
             self.assets.set_bgm_volume(0.05) #sound volume
 
             # makan
@@ -246,7 +239,6 @@ class SnakeScene:
         # animasi snake
         self.renderer.draw(surface, self.anim.body, 16)
 
-        # ===== HOME UI =====
         if self.state == "home":
             title = self.ui.font_big.render("SNAKE", True, (255,255,0))
             surface.blit(title, (self.width//2 - title.get_width()//2, 80))
@@ -257,7 +249,6 @@ class SnakeScene:
             text.set_alpha(alpha)
             surface.blit(text, (self.width//2 - text.get_width()//2, self.height - 150))
 
-        # ===== LEVEL UI =====
         elif self.state == "level":
             title = self.ui.font_big.render("SELECT LEVEL", True, (255,255,0))
             surface.blit(title, (self.width//2 - title.get_width()//2, 100))

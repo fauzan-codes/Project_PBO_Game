@@ -41,19 +41,15 @@ class SnakeUI:
     def draw_side_panel(self, surface, x, y, width, height, score, level, time_played):
         pygame.draw.rect(surface, (40,40,60), (x, y, width, height), border_radius=10)
 
-        # title
         title = self.font.render("SNAKE", True, (255,255,0))
         surface.blit(title, (x+50, y+10))
 
-        # score
         score_text = self.font.render(f"Score: {score}", True, (255,255,255))
         surface.blit(score_text, (x+20, y+60))
 
-        # level
         level_text = self.font.render(f"Level: {level}", True, (255,255,255))
         surface.blit(level_text, (x+20, y+100))
 
-        # time
         minutes = time_played // 60
         seconds = time_played % 60
 

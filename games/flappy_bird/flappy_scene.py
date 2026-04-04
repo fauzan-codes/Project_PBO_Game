@@ -6,7 +6,6 @@ from games.flappy_bird.pipe import Pipe
 from games.flappy_bird.flappy_assets import FlappyAssets
 from games.flappy_bird.flappy_ui import FlappyUI
 from games.flappy_bird.flappy_renderer import FlappyRenderer
-from games.flappy_bird.flappy_animation import FlappyAnimation
 
 
 class FlappyScene:
@@ -18,7 +17,6 @@ class FlappyScene:
         self.assets = FlappyAssets()
         self.ui = FlappyUI(width, height, self.assets)
         self.renderer = FlappyRenderer(width, height, self.assets)
-        self.anim = FlappyAnimation()
 
         # bird
         self.bird = Bird(self.width // 2 - 20, self.height // 2, self.assets)
@@ -43,8 +41,6 @@ class FlappyScene:
 
         self.ground_x = 0
         self.ground_speed = 3
-
-
         self.idle_jump_timer = 0
 
 
@@ -52,7 +48,7 @@ class FlappyScene:
     def handle_event(self, event, rel_mouse=None):
         if event.type == pygame.KEYDOWN:
 
-            # ESC CONTROL
+            # escape
             if event.key == pygame.K_ESCAPE:
                 if self.state == "HOME":
                     from scenes.game_select import GameSelect
@@ -67,7 +63,7 @@ class FlappyScene:
                 return
             
 
-            # PAUSE CONTROL
+            # pause 
             if self.pause:
                 if event.key == pygame.K_SPACE:
                     self.pause = False
@@ -82,7 +78,7 @@ class FlappyScene:
                     self.reset()
                 return
 
-            # SPACE CONTROL
+            # space kb
             if event.key == pygame.K_SPACE:
                 if self.state == "HOME":
                     self.state = "PLAYING"
@@ -94,7 +90,7 @@ class FlappyScene:
                     self.assets.sfx_wing.play()
 
 
-        # MOUSE
+        # mouse
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if rel_mouse is None:
                 return
@@ -128,15 +124,12 @@ class FlappyScene:
     # ================= UPDATE =================
     def update(self):
         self.assets.update()
-        self.anim.update()
 
-        # ================= PAUSE =================
+        # pause
         if self.pause:
-            # burung tetap animasi idle (tidak jatuh)
             self.bird.update_idle()
             return
 
-        # ================= DYING =================
         if self.state == "DYING":
             self.game_over_timer += 1
 
@@ -145,11 +138,10 @@ class FlappyScene:
 
             return
 
-        # ================= GAME OVER =================
         if self.state == "GAME_OVER":
             return
 
-        # ================= SCROLL (HANYA SAAT MAIN) =================
+        # bg
         self.bg_x -= self.bg_speed
         if self.bg_x <= -self.assets.background.get_width():
             self.bg_x = 0
@@ -158,12 +150,10 @@ class FlappyScene:
         if self.ground_x <= -self.assets.ground.get_width():
             self.ground_x = 0
 
-        # ================= HOME =================
         if self.state == "HOME":
             self.bird.update_idle()
             return
 
-        # ================= PLAYING =================
         if self.state == "PLAYING":
             self.bird.update()
 
@@ -180,18 +170,13 @@ class FlappyScene:
                 pipe = Pipe(self.width, height, self.assets, self.ground_y)
                 # pipe.gap = 140
                 pipe.gap = max(110, 140 - self.score)
-
                 self.pipes.append(pipe)
 
-            # UPDATE PIPE
             for pipe in self.pipes:
                 pipe.update()
 
-            # CLEAN PIPE
-            self.pipes = [p for p in self.pipes if p.x + p.width > 0]
-
-            # COLLISION
-            bird_rect = self.bird.get_rect()
+            self.pipes = [p for p in self.pipes if p.x + p.width > 0] #clean
+            bird_rect = self.bird.get_rect() #collision
 
             for pipe in self.pipes:
                 top, bottom = pipe.get_rects()
@@ -205,7 +190,7 @@ class FlappyScene:
                     self.score += 1
                     self.assets.sfx_swoosh.play()
 
-            # GROUND COLLISION
+            # ground collision
             bird_height = self.bird.image.get_height()
             if self.bird.y + bird_height >= self.ground_y:
                 self.bird.y = self.ground_y - bird_height

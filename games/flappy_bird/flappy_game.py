@@ -32,15 +32,6 @@ class FlappyGame(BaseGame):
             "• Jangan menabrak pipa",
             "• Jangan jatuh ke tanah",
             "• Skor bertambah setiap melewati pipa",
-            "• Game semakin sulit seiring skor naik",
-            "",
-            "--- FITUR ---",
-            "• Dynamic difficulty",
-            "• Pause menu",
-            "• Game over menu",
-            "• Home screen",
-            "• Sound effect",
-            "• Smooth animation",
             "",
             "Design by: Fauzan Adhim Muntazhar (003) TIA25"
         ]

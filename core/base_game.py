@@ -26,6 +26,7 @@ class BaseGame:
         self.font = pygame.font.Font(None, 40)
         self.small_font = pygame.font.Font(None, 28)
 
+        self.graph = False
         self.calculate_layout()
 
     # ==================== OVERRIDE AREA ====================
@@ -158,11 +159,17 @@ class BaseGame:
         if hasattr(self, "scene") and self.scene:
             self.scene.draw(self.game_surface)
 
-        # scaled = pygame.transform.smoothscale(
-        scaled = pygame.transform.scale(
-            self.game_surface,
-            (inner_rect.width, inner_rect.height)
-        )
+
+        if self.graph: #smooth grafik
+            scaled = pygame.transform.smoothscale(
+                self.game_surface,
+                (inner_rect.width, inner_rect.height)
+            )
+        else: #gameplay
+            scaled = pygame.transform.scale(
+                self.game_surface,
+                (inner_rect.width, inner_rect.height)
+            )
 
         screen.blit(scaled, (inner_rect.x, inner_rect.y))
 

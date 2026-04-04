@@ -18,7 +18,7 @@ class SnakeAssets:
         self.frame_index = 0
         self.timer = 0
 
-        # ================= SOUND =================
+        # sound
         self.eat_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/eat.ogg"))
         self.die_sfx = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/Snake/die.wav"))
         self.bgm_path = os.path.join(BASE_DIR, "../../assets/Snake/Aknotronic - Crystals.ogg")

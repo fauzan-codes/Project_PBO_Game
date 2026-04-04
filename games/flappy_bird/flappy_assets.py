@@ -6,7 +6,6 @@ class FlappyAssets:
     def __init__(self):
         BASE_DIR = os.path.dirname(__file__)
 
-        # ================= IMAGE =================
         self.background = pygame.image.load(
             os.path.join(BASE_DIR, "../../assets/FlappyBird/background.png")
         )
@@ -19,7 +18,7 @@ class FlappyAssets:
             os.path.join(BASE_DIR, "../../assets/FlappyBird/pipe.png")
         )
 
-        # BIRD ANIMATION (3 frame)
+        # bird animation
         self.bird_frames = [
             pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/bird-downflap.png")),
             pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/bird-midflap.png")),
@@ -63,7 +62,7 @@ class FlappyAssets:
             )
             self.numbers.append(img)
 
-        # ================= SOUND =================
+        # SFX
         self.sfx_die = pygame.mixer.Sound(
             os.path.join(BASE_DIR, "../../assets/FlappyBird/die.ogg")
         )
@@ -83,7 +82,6 @@ class FlappyAssets:
         self.sfx_wing.set_volume(0.5)
         self.sfx_swoosh.set_volume(0.5)
 
-        # ================= ANIMATION =================
         self.frame_index = 0
         self.timer = 0
 
