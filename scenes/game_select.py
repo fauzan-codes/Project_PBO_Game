@@ -18,7 +18,7 @@ class GameSelect:
             {
                 "name": "Flappy Bird", 
                 "class": FlappyGame, 
-                "image": "Snake_poster.png"
+                "image": "flappyBird-poster.png"
             },
             {
                 "name": "Game 3", 
