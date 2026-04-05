@@ -7,8 +7,7 @@ games/
     ├── dino_assets.py     (assets)
     ├── dino.py            (logic dari dino)
     ├── obstacle.py        (logic cactus + bird)
-    ├── ground.py          (tanah infinite)
-    ├── cloud.py           (background)
+    ├── Environment        (ground + cloud)
     ├── dino_ui.py         (score, pause text, dll)
 
 1. Mekanik Karakter (Si Dino)
@@ -45,9 +44,12 @@ Pembekuan Layar: Semua gerakan (tanah, rintangan, awan) berhenti seketika saat t
 Pause: Game bisa di-pause saat menekan esp saat playing
 Intro Animasi: Sebelum game dimulai, Dino melakukan lompatan kecil dari posisi diam untuk memicu gerakan tanah. jadi untuk memulai user tekan lompat maka dino akan lompat dan tanah mulai di render dari bawah dino ke kanan hingga habis dan baru deh jalan.
 
-7. file assets.
+7. file assets ".\assets\dinoRun\"
 untuk kaktus. cactus1.png (2cactusbesar dan 1 cactus kecil), cactus2.png(1kaktus besar), cactus3.png (2besar), cactus4.png(3sedang), cactus5.png(2sedang), cactus6.png(1sedang)
 untuk burung bird.png(sayap bawah), bird2.png(sayap atas).
 untuk dino ada DinoJumping.png(dino diam kaki berdiri), DinoDucking2.png, DinoDucking1.png, Dino2.png, Dino1.png, untuk 1 dan 2 itu animasi langkah kakinya yah
 untuk img lainnya ada cloud.png(muncul secara acak), ground.png(tanahnya), untuk bg siang atau malam blm ada.
 untuk sfx ada 100points.mp3, jump.mp3, lose.mp3
+
+
+ukuran assets dino biasa(lompat/diam dan jalan) 40x43 dan untuk nunduk 54x26. awan 46x13 dan ground 542x12. burung 42x31 untuk keduanya. untuk kaktus berbeda beda, cactus1 49x47, cactus2 22x47, cactus3 48x56, cactus4 49x33, cactus5 32x33, 15x33

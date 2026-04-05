@@ -2,6 +2,7 @@
 import pygame
 from games.snake.snake_game import SnakeGame
 from games.flappy_bird.flappy_game import FlappyGame
+from games.dino_run.dino_game import DinoGame
 
 class GameSelect:
     def __init__(self, game_manager):
@@ -21,9 +22,9 @@ class GameSelect:
                 "image": "flappyBird-poster.png"
             },
             {
-                "name": "Game 3", 
-                "class": None, 
-                "image": "img-tes.png"
+                "name": "Dino Run Chrome", 
+                "class": DinoGame, 
+                "image": "Snake_poster.png"
             },
             {
                 "name": "Game 4", 
