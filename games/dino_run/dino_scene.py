@@ -16,9 +16,9 @@ class DinoScene:
         self.assets = assets
 
         # === OBJECT ===
-        self.dino = Dino(100, height - 150, self.assets)
-        self.obstacles = ObstacleManager(width, height, self.assets)
         self.env = Environment(width, height, self.assets)
+        self.dino = Dino(100, self.env.ground_y - 86 + 18, self.assets)
+        self.obstacles = ObstacleManager(width, height, self.assets)
         self.ui = DinoUI(width, height)
 
         # === STATE ===
@@ -27,10 +27,13 @@ class DinoScene:
 
         # === GAME DATA ===
         self.score = 0
-        self.speed = 5
+        self.speed = 7
 
         # obstacle spawn delay
         self.spawn_timer = 0
+
+        self.score_timer = 0
+        self.last_score_sound = 0
 
     # ================= INPUT =================
     def handle_event(self, event, rel_mouse=None):
@@ -55,7 +58,6 @@ class DinoScene:
                 if event.key == pygame.K_SPACE:
                     self.pause = False
                     self.dino.jump()
-                    self.assets.sfx_jump.play()
                 elif event.key == pygame.K_r:
                     self.reset()
                 return
@@ -71,11 +73,9 @@ class DinoScene:
                 if self.state == "HOME":
                     self.state = "PLAYING"
                     self.dino.jump()
-                    self.assets.sfx_jump.play()
 
                 elif self.state == "PLAYING":
                     self.dino.jump()
-                    self.assets.sfx_jump.play()
 
             if event.key == pygame.K_DOWN:
                 self.dino.duck(True)
@@ -95,7 +95,8 @@ class DinoScene:
 
         # HOME (idle anim)
         if self.state == "HOME":
-            self.dino.update()
+            self.dino.image = self.assets.dino_jump
+            # self.env.update(0) 
             return
 
         if self.state == "PLAYING":
@@ -110,17 +111,25 @@ class DinoScene:
                 return
 
             # === SCORE ===
-            self.score += 1
+            self.score_timer += 1
+            increment_speed = max(3, int(8 - self.speed * 0.5))
 
-            if self.score % 100 == 0:
+            if self.score_timer >= increment_speed:
+                self.score += 1
+                self.score_timer = 0
+
+            if self.score - self.last_score_sound >= 100:
                 self.assets.sfx_score.play()
+                self.last_score_sound = self.score
 
             # === SPEED SCALE ===
-            self.speed += 0.001
+            if self.speed < 15:
+                self.speed += 0.003
+            elif self.speed < 20:
+                self.speed += 0.001
 
     # ================= DRAW =================
     def draw(self, screen):
-        # background (nanti bisa day/night)
         screen.fill((255, 255, 255))
 
         self.env.draw(screen)

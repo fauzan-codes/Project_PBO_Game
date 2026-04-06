@@ -7,7 +7,7 @@ class Cloud:
     def __init__(self, x, y, image):
         self.x = x
         self.y = y
-        self.image = pygame.transform.scale(image, (92,26))
+        self.image = pygame.transform.scale(image, (92, 26))
 
     def update(self, speed):
         self.x -= speed * 0.3
@@ -23,16 +23,17 @@ class Environment:
         self.assets = assets
 
         # === GROUND ===
-        self.ground_y = height - 70
-        self.ground_img = assets.ground
-        self.ground_y = height - 40
+        self.ground_img = pygame.transform.scale(
+            assets.ground,
+            (assets.ground.get_width() * 2, assets.ground.get_height() * 2)
+        )
+
+        self.ground_height = self.ground_img.get_height()
+        self.ground_y = self.height - self.ground_height -30
 
         self.tile_width = self.ground_img.get_width()
         self.tiles = int(self.width / self.tile_width) + 2
         self.x = 0
-
-        self.x1 = 0
-        self.x2 = width
 
         # === CLOUD ===
         self.clouds = []
@@ -40,15 +41,10 @@ class Environment:
 
     # =========================
     def update(self, speed):
-        # === GROUND LOOP ===
-        self.x1 -= speed
-        self.x2 -= speed
 
-        if self.x1 <= -self.width:
-            self.x1 = self.x2 + self.width
-
-        if self.x2 <= -self.width:
-            self.x2 = self.x1 + self.width
+        self.x -= speed
+        if self.x <= -self.tile_width:
+            self.x = 0
 
         # === CLOUD SPAWN ===
         self.spawn_timer += 1
@@ -59,10 +55,6 @@ class Environment:
         # update cloud
         for cloud in self.clouds:
             cloud.update(speed)
-
-        self.x -= speed
-        if self.x <= -self.tile_width:
-            self.x = 0
 
         # remove off-screen
         self.clouds = [c for c in self.clouds if c.x > -100]
@@ -76,12 +68,10 @@ class Environment:
     # =========================
     def draw(self, screen):
         for i in range(self.tiles):
-            screen.blit(self.ground_img, (self.x + i * self.tile_width, self.ground_y))
+            screen.blit(
+                self.ground_img,
+                (self.x + i * self.tile_width, self.ground_y)
+            )
 
-        # ground
-        screen.blit(self.ground_img, (self.x1, self.ground_y))
-        screen.blit(self.ground_img, (self.x2, self.ground_y))
-
-        # cloud
         for cloud in self.clouds:
             cloud.draw(screen)

@@ -1,5 +1,4 @@
 # .\games\dino_run\dino_ui.py
-# games/dino_run/dino_ui.py
 import pygame
 
 
