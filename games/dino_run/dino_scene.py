@@ -39,7 +39,6 @@ class DinoScene:
     def handle_event(self, event, rel_mouse=None):
         if event.type == pygame.KEYDOWN:
 
-            # ESC
             if event.key == pygame.K_ESCAPE:
                 if self.state == "HOME":
                     from scenes.game_select import GameSelect
@@ -53,7 +52,7 @@ class DinoScene:
 
                 return
 
-            # === PAUSE ===
+            # pause
             if self.pause:
                 if event.key == pygame.K_SPACE:
                     self.pause = False
@@ -62,16 +61,18 @@ class DinoScene:
                     self.reset()
                 return
 
-            # === GAME OVER ===
+            # gameover
             if self.state == "GAME_OVER":
                 if event.key == pygame.K_r:
                     self.reset()
                 return
 
-            # === CONTROL ===
+            # kb
             if event.key in (pygame.K_SPACE, pygame.K_UP):
                 if self.state == "HOME":
                     self.state = "PLAYING"
+                    self.env.is_expanding = True 
+                    self.env.allow_scroll = False
                     self.dino.jump()
 
                 elif self.state == "PLAYING":
@@ -103,6 +104,14 @@ class DinoScene:
             # === UPDATE OBJECT ===
             self.dino.update()
             self.env.update(self.speed)
+
+            if self.env.is_expanding:
+                # self.obstacles.obstacles.clear()
+                return
+
+            if not self.dino.is_jumping and not self.env.allow_scroll:
+                self.env.allow_scroll = True
+
             self.obstacles.update(self.speed, self.score)
 
             # === COLLISION ===
