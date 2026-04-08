@@ -66,13 +66,12 @@ class BaseGame:
         self.header_rect = pygame.Rect(0, 0, self.width, self.header_height)
 
         if not self.fullscreen:
+            margin_x = 60
+            info_width = self.width - (margin_x * 2)
             info_height = len(self.get_info_text()) * 30 + 20
-            self.info_rect = pygame.Rect(
-                0,
-                self.game_rect.bottom + 10,
-                self.width,
-                info_height
-            )
+            info_x = (self.width - info_width) // 2
+
+            self.info_rect = pygame.Rect(info_x, self.game_rect.bottom + 10,self.width - (margin_x*2),info_height)
         else:
             self.info_rect = None
 
@@ -81,6 +80,8 @@ class BaseGame:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_f:
                 self.toggle_fullscreen()
+            if event.key == pygame.K_m:
+                self.game_manager.asset.toggle_mute()
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
@@ -214,14 +215,13 @@ class BaseGame:
         shadow = rect.copy()
         shadow.y += 5
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=10)
-
         pygame.draw.rect(screen, (40, 40, 50), rect, border_radius=10)
 
         y = rect.y + 10
 
         for line in self.get_info_text():
             text = self.small_font.render(line, True, (200, 200, 200))
-            screen.blit(text, (20, y))
+            screen.blit(text, (rect.x + 20, y))
             y += 30
 
     # ==================== SCROLL ====================

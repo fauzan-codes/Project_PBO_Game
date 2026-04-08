@@ -1,5 +1,6 @@
 # .\games\flappy_bird\flappy_ui.py
 import pygame
+import math
 
 class FlappyUI:
     def __init__(self, width, height, assets):
@@ -7,7 +8,7 @@ class FlappyUI:
         self.height = height
         self.assets = assets
 
-    def draw_center_text(self, screen, text, y, size=50):
+    def draw_center_text(self, screen, text, y, size=60):
         font = pygame.font.Font(None, size)
         render = font.render(text, True, (255,255,255))
         rect = render.get_rect(center=(self.width//2, y))
@@ -26,7 +27,15 @@ class FlappyUI:
     def draw_home(self, screen):
         img = pygame.transform.scale(self.assets.title, (300, 80))
         screen.blit(img, (self.width//2 - 150, 100))
-        self.draw_center_text(screen, "CLICK TO START", 470, 45)
+
+        alpha = int((math.sin(pygame.time.get_ticks() * 0.004) + 1) * 105)
+        font = pygame.font.Font(None, 60)
+        text = font.render("CLICK TO START", True, (255,255,255))
+        text = text.convert_alpha()
+        text.set_alpha(alpha)
+
+        rect = text.get_rect(center=(self.width//2, 470))
+        screen.blit(text, rect)
 
     def draw_game_over(self, screen):
         img = pygame.transform.scale(self.assets.gameover, (300, 80))

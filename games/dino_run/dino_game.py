@@ -9,8 +9,9 @@ class DinoGame(BaseGame):
         super().__init__()
 
         self.game_manager = game_manager
+        self.graph = True
 
-        self.assets = DinoAssets()
+        self.assets = DinoAssets(self.game_manager.asset)
         self.scene = DinoScene(self.game_width, self.game_height, self, self.assets)
 
     def get_title(self):
@@ -20,11 +21,28 @@ class DinoGame(BaseGame):
         return [
             "",
             "--- CARA BERMAIN ---",
+            "• Tekan SPACE untuk mulai",
+            "• Tekan SPACE atau UP untuk melompat",
+            "• Tekan DOWN untuk menunduk",
+            "• Hindari kaktus dan burung",
+            "",
+            "--- KONTROL ---",
+            "• SPACE / UP : Lompat",
+            "• DOWN       : Menunduk",
+            "• ESC        : Pause",
+            "• R          : Restart",
+            "• M          : Mute",
             "",
             "--- ATURAN GAME ---",
+            "• Jangan menabrak kaktus",
+            "• Jangan menabrak burung",
+            "• Skor bertambah seiring waktu",
+            "• Kecepatan meningkat seiring skor",
             "",
             "--- INFORMASI LEVEL ---",
-            "",
+            "• Bird muncul setelah score 400",
+            "• Speed meningkat secara bertahap",
+            "• Game semakin cepat seiring waktu",
             "",
             "Design by: Fauzan Adhim Muntazhar (003) TIA25"
         ]

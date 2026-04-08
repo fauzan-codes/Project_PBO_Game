@@ -15,27 +15,24 @@ class DinoScene:
         self.game = game
         self.assets = assets
 
-        # === OBJECT ===
+        # objek
         self.env = Environment(width, height, self.assets)
         self.dino = Dino(100, self.env.ground_y - 86 + 18, self.assets)
         self.obstacles = ObstacleManager(width, height, self.assets)
-        self.ui = DinoUI(width, height)
+        self.ui = DinoUI(width, height, self.assets)
 
-        # === STATE ===
+        # status
         self.state = "HOME"
-        self.pause = False
 
-        # === GAME DATA ===
+        # score
         self.score = 0
         self.speed = 7
 
-        # obstacle spawn delay
         self.spawn_timer = 0
-
         self.score_timer = 0
         self.last_score_sound = 0
 
-    # ================= INPUT =================
+
     def handle_event(self, event, rel_mouse=None):
         if event.type == pygame.KEYDOWN:
 
@@ -45,7 +42,7 @@ class DinoScene:
                     self.game.game_manager.change_scene(GameSelect(self.game.game_manager))
 
                 elif self.state == "PLAYING":
-                    self.pause = True
+                    self.state = "PAUSE"
 
                 elif self.state == "GAME_OVER":
                     self.reset()
@@ -53,12 +50,14 @@ class DinoScene:
                 return
 
             # pause
-            if self.pause:
+            if self.state == "PAUSE":
                 if event.key == pygame.K_SPACE:
-                    self.pause = False
+                    self.state = "PLAYING"
                     self.dino.jump()
                 elif event.key == pygame.K_r:
                     self.reset()
+                elif event.key == pygame.K_ESCAPE:
+                    self.state = "PLAYING"
                 return
 
             # gameover
@@ -85,28 +84,26 @@ class DinoScene:
             if event.key == pygame.K_DOWN:
                 self.dino.duck(False)
 
-    # ================= UPDATE =================
+  
     def update(self):
-        # pause
-        if self.pause:
+        if hasattr(self.assets, "update"):
+            self.assets.update()
+
+        if self.state == "PAUSE":
             return
 
         if self.state == "GAME_OVER":
             return
 
-        # HOME (idle anim)
         if self.state == "HOME":
             self.dino.image = self.assets.dino_jump
-            # self.env.update(0) 
             return
 
         if self.state == "PLAYING":
-            # === UPDATE OBJECT ===
             self.dino.update()
             self.env.update(self.speed)
 
             if self.env.is_expanding:
-                # self.obstacles.obstacles.clear()
                 return
 
             if not self.dino.is_jumping and not self.env.allow_scroll:
@@ -114,12 +111,12 @@ class DinoScene:
 
             self.obstacles.update(self.speed, self.score)
 
-            # === COLLISION ===
+            # colision
             if self.obstacles.check_collision(self.dino):
                 self.game_over()
                 return
 
-            # === SCORE ===
+            # score
             self.score_timer += 1
             increment_speed = max(3, int(8 - self.speed * 0.5))
 
@@ -131,13 +128,13 @@ class DinoScene:
                 self.assets.sfx_score.play()
                 self.last_score_sound = self.score
 
-            # === SPEED SCALE ===
+            # speed
             if self.speed < 15:
                 self.speed += 0.003
             elif self.speed < 20:
                 self.speed += 0.001
 
-    # ================= DRAW =================
+
     def draw(self, screen):
         screen.fill((255, 255, 255))
 
@@ -155,10 +152,10 @@ class DinoScene:
             if self.state == "GAME_OVER":
                 self.ui.draw_game_over(screen)
 
-        if self.pause:
+        if self.state == "PAUSE":
             self.ui.draw_pause(screen)
 
-    # ================= GAME LOGIC =================
+   
     def game_over(self):
         if self.state != "GAME_OVER":
             self.state = "GAME_OVER"

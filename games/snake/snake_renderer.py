@@ -53,3 +53,63 @@ class SnakeRenderer:
     
     def draw_border(self, surface, rect):
         pygame.draw.rect(surface, (200,200,200), rect, 4, border_radius=10)
+
+
+    def draw_play(self, surface, scene):
+        surface.fill((20, 20, 30))
+
+        width = scene.width
+        height = scene.height
+        grid_count = scene.grid_count
+
+        sidebar_width = 200
+        padding = 20
+
+        map_area_width = width - sidebar_width - padding*3
+        map_area_height = height - padding*2
+
+        map_size = min(map_area_width, map_area_height)
+
+        tile = map_size // grid_count
+        map_size = tile * grid_count
+
+        offset_x = padding
+        offset_y = (height - map_size) // 2
+
+        # border
+        border_rect = pygame.Rect(
+            offset_x - 4,
+            offset_y - 4,
+            map_size + 8,
+            map_size + 8
+        )
+        pygame.draw.rect(surface, (100, 255, 100), border_rect, border_radius=8)
+
+        # map
+        bg = pygame.transform.scale(scene.assets.get_bg(), (tile, tile))
+        for y in range(grid_count):
+            for x in range(grid_count):
+                surface.blit(bg, (offset_x + x*tile, offset_y + y*tile))
+
+        # food
+        fx, fy = scene.food.position
+        food_img = pygame.transform.scale(scene.assets.get_food(), (tile, tile))
+        surface.blit(food_img, (offset_x + fx*tile, offset_y + fy*tile))
+
+        # snake
+        self.draw(surface, scene.snake.body, tile, (offset_x, offset_y))
+
+        # side panel
+        panel_x = offset_x + map_size + padding
+        panel_y = offset_y
+
+        scene.ui.draw_side_panel(
+            surface,
+            panel_x,
+            panel_y,
+            sidebar_width,
+            map_size,
+            scene.score,
+            scene.level,
+            scene.elapsed_time
+        )

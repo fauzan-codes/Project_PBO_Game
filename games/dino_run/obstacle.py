@@ -68,42 +68,33 @@ class ObstacleManager:
         for obs in self.obstacles:
             obs.update(speed)
 
-        # hapus obstacle keluar layar
         self.obstacles = [o for o in self.obstacles if o.x > -100]
 
-        # spawn pertama
         if len(self.obstacles) == 0:
             self.spawn_obstacle(score)
             return
 
         last = self.obstacles[-1]
 
-        # === BASE GAP ===
         base_min = 500
         base_max = 1000
 
-        # === SPEED SCALING ===
         speed_factor = speed * 30
-
         min_gap = base_min + int(speed_factor)
         max_gap = base_max + int(speed_factor * 1.5)
 
-        # === RANDOM VARIATION ===
         variation = random.randint(-100, 250)
-
         required_gap = random.randint(min_gap, max_gap) + variation
         required_gap = max(350, required_gap)
 
-        # === CEK JARAK REAL ===
         distance_to_right = self.width - last.x
-
         if distance_to_right >= required_gap:
             self.spawn_obstacle(score)
 
     def spawn_obstacle(self, score):
         x = self.width + 50
 
-        # === BIRD ===
+        # burd
         if score > 400 and random.random() < 0.3:
             y = random.choice([
                 self.ground_y - 80,   
@@ -112,7 +103,7 @@ class ObstacleManager:
             ])
             self.obstacles.append(Bird(x, y, self.assets))
 
-        # === CACTUS ===
+        # kaktus
         else:
             img = random.choice(self.assets.cactus)
             img = pygame.transform.scale(img, (img.get_width() * 2, img.get_height() * 2))

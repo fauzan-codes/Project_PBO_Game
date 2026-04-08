@@ -4,11 +4,12 @@ import pygame
 class Home:
     def __init__(self, game_manager):
         self.game_manager = game_manager
+
+        self.selected = 0
+        self.game_manager.asset.play_random_music(volume=0.3)
+
         self.font = pygame.font.Font(None, 60)
         self.small_font = pygame.font.Font(None, 40)
-
-        self.selected = 0  # 0 = play, 1 = quit
-        self.game_manager.asset.play_random_music(volume=0.3)
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -16,6 +17,8 @@ class Home:
                 self.selected = (self.selected - 1) % 2
             elif event.key == pygame.K_DOWN:
                 self.selected = (self.selected + 1) % 2
+            elif event.key == pygame.K_m:
+                self.game_manager.asset.toggle_mute()   
 
             elif event.key == pygame.K_RETURN:
                 if self.selected == 0:
@@ -53,11 +56,10 @@ class Home:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        # ===== PLAY BUTTON =====
+        # play btn
         self.play_rect = pygame.Rect(0, 0, 250, 60)
         self.play_rect.center = (screen_width // 2, screen_height // 2)
 
-        # sync mouse -> selected
         if self.play_rect.collidepoint(mouse_pos):
             self.selected = 0
 
@@ -65,7 +67,7 @@ class Home:
         if self.play_rect.collidepoint(mouse_pos) or self.selected == 0:
             color_play = (255, 255, 0)
 
-        # shadow
+
         shadow = self.play_rect.copy()
         shadow.y += 5
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
@@ -76,11 +78,10 @@ class Home:
         play_text_rect = play_text.get_rect(center=self.play_rect.center)
         screen.blit(play_text, play_text_rect)
 
-        # ===== QUIT BUTTON =====
+        # quit btn
         self.quit_rect = pygame.Rect(0, 0, 250, 60)
         self.quit_rect.center = (screen_width // 2, screen_height // 2 + 90)
 
-        # sync mouse -> selected
         if self.quit_rect.collidepoint(mouse_pos):
             self.selected = 1
 
@@ -88,11 +89,11 @@ class Home:
         if self.quit_rect.collidepoint(mouse_pos) or self.selected == 1:
             color_quit = (255, 255, 0)
 
-        # shadow
+        
         shadow = self.quit_rect.copy()
         shadow.y += 5
+        
         pygame.draw.rect(screen, (50, 50, 50), shadow, border_radius=15)
-
         pygame.draw.rect(screen, color_quit, self.quit_rect, border_radius=15)
 
         quit_text = self.small_font.render("QUIT", True, (0, 0, 0))

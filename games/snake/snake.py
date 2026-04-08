@@ -31,12 +31,12 @@ class Snake(GameObject):
 
         self.setup_level()
 
-    # ================= INPUT =================
+    
     def set_direction(self, direction):
         if (direction[0] * -1, direction[1] * -1) != self.direction:
             self.next_direction = direction
 
-    # ================= UPDATE =================
+    
     def update(self):
         self.move_timer += 1
 
@@ -44,7 +44,7 @@ class Snake(GameObject):
             self.move_timer = 0
             self.move()
 
-    # ================= MOVE =================
+    
     def move(self):
         self.direction = self.next_direction
 
@@ -66,11 +66,11 @@ class Snake(GameObject):
         else:
             self.grow = False
 
-    # ================= GROW =================
+    
     def eat(self):
         self.grow = True
 
-    # ================= COLLISION =================
+    
     def check_self_collision(self):
         head = self.body[0]
         return head in self.body[1:]

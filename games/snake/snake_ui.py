@@ -1,5 +1,6 @@
 # # Project_PBO_Game\games\snake\snake_ui.py
 import pygame
+import math
 
 class SnakeUI:
     def __init__(self, width, height):
@@ -91,3 +92,36 @@ class SnakeUI:
         # buttons
         self.draw_button(surface, self.btn_restart, "RESTART", mouse_pos)
         self.draw_button(surface, self.btn_home, "HOME", mouse_pos)
+
+    def draw_menu(self, surface, scene):
+        bg = scene.assets.get_bg()
+
+        # background tile
+        for y in range(0, scene.height, 16):
+            for x in range(0, scene.width, 16):
+                surface.blit(bg, (x, y))
+
+        # anim snake
+        scene.renderer.draw(surface, scene.anim.body, 16)
+
+        if scene.state == "HOME":
+            title = self.font_big.render("SNAKE", True, (255,255,0))
+            surface.blit(title, (scene.width//2 - title.get_width()//2, 80))
+
+            alpha = int((math.sin(pygame.time.get_ticks() * 0.004) + 1) * 105)
+            text = self.font_medium.render("CLICK TO START", True, (255,255,255))
+            text = text.convert_alpha()
+            text.set_alpha(alpha)
+
+            surface.blit(text, (
+                scene.width//2 - text.get_width()//2,
+                scene.height - 150
+            ))
+
+        elif scene.state == "LEVEL":
+            title = self.font_big.render("SELECT LEVEL", True, (255,255,0))
+            surface.blit(title, (scene.width//2 - title.get_width()//2, 100))
+
+            self.draw_button(surface, self.easy, "EASY", scene.mouse_pos)
+            self.draw_button(surface, self.medium, "MEDIUM", scene.mouse_pos)
+            self.draw_button(surface, self.hard, "HARD", scene.mouse_pos)

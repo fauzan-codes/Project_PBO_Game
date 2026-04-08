@@ -3,18 +3,17 @@ import pygame
 import random
 from games.flappy_bird.bird import Bird
 from games.flappy_bird.pipe import Pipe
-from games.flappy_bird.flappy_assets import FlappyAssets
 from games.flappy_bird.flappy_ui import FlappyUI
 from games.flappy_bird.flappy_renderer import FlappyRenderer
 
 
 class FlappyScene:
-    def __init__(self, width, height, game):
+    def __init__(self, width, height, game, assets):
         self.width = width
         self.height = height
         self.game = game
+        self.assets = assets
 
-        self.assets = FlappyAssets()
         self.ui = FlappyUI(width, height, self.assets)
         self.renderer = FlappyRenderer(width, height, self.assets)
 
@@ -24,7 +23,6 @@ class FlappyScene:
 
         # status
         self.state = "HOME"
-        self.pause = False
         self.game_over_timer = 0
 
         # score
@@ -55,7 +53,7 @@ class FlappyScene:
                     self.game.game_manager.change_scene(GameSelect(self.game.game_manager))
 
                 elif self.state == "PLAYING":
-                    self.pause = True
+                    self.state = "PAUSE"
 
                 elif self.state == "GAME_OVER":
                     self.reset()
@@ -64,9 +62,9 @@ class FlappyScene:
             
 
             # pause 
-            if self.pause:
+            if self.state == "PAUSE":
                 if event.key == pygame.K_SPACE:
-                    self.pause = False
+                    self.state = "PLAYING"
                     self.bird.jump()
                     self.assets.sfx_wing.play()
                 elif event.key == pygame.K_r:
@@ -97,7 +95,7 @@ class FlappyScene:
             
             mouse_pos = rel_mouse
 
-            if self.pause:
+            if self.state == "PAUSE":
                 # if hasattr(self.ui, "resume_rect") and self.ui.resume_rect.collidepoint(mouse_pos):
                 #     self.state = "PLAYING"
                 #     self.bird.jump()
@@ -121,82 +119,76 @@ class FlappyScene:
                 self.assets.sfx_wing.play()
 
 
-    # ================= UPDATE =================
+
     def update(self):
         self.assets.update()
 
-        # pause
-        if self.pause:
+        if self.state == "PAUSE":
             self.bird.update_idle()
             return
 
         if self.state == "DYING":
             self.game_over_timer += 1
-
             if self.game_over_timer > 30:
                 self.state = "GAME_OVER"
-
             return
 
         if self.state == "GAME_OVER":
             return
-
-        # bg
-        self.bg_x -= self.bg_speed
-        if self.bg_x <= -self.assets.background.get_width():
-            self.bg_x = 0
-
-        self.ground_x -= self.ground_speed
-        if self.ground_x <= -self.assets.ground.get_width():
-            self.ground_x = 0
 
         if self.state == "HOME":
             self.bird.update_idle()
             return
 
         if self.state == "PLAYING":
+            
+            self.bg_x -= self.bg_speed
+            if self.bg_x <= -self.assets.background.get_width():
+                self.bg_x = 0
+
+            self.ground_x -= self.ground_speed
+            if self.ground_x <= -self.assets.ground.get_width():
+                self.ground_x = 0
+                
             self.bird.update()
 
-            # SPAWN PIPE
+            # pipe
             self.spawn_timer += 1
-            # spawn_delay = 80
-            # spawn_delay = max(50, 80 - self.score // 2)  #berdasarkan score
-            spawn_delay = random.randint(80, 110)  #random pipe
+            spawn_delay = random.randint(80, 110)
 
             if self.spawn_timer > spawn_delay:
                 self.spawn_timer = 0
-
                 height = random.randint(100, self.ground_y - 250)
                 pipe = Pipe(self.width, height, self.assets, self.ground_y)
-                # pipe.gap = 140
                 pipe.gap = max(110, 140 - self.score)
                 self.pipes.append(pipe)
 
             for pipe in self.pipes:
                 pipe.update()
 
-            self.pipes = [p for p in self.pipes if p.x + p.width > 0] #clean
-            bird_rect = self.bird.get_rect() #collision
+            self.pipes = [p for p in self.pipes if p.x + p.width > 0]
+            bird_rect = self.bird.get_rect()
 
+            # collision
             for pipe in self.pipes:
                 top, bottom = pipe.get_rects()
 
                 if bird_rect.colliderect(top) or bird_rect.colliderect(bottom):
                     self.game_over()
-                    break
+                    return
 
                 if pipe not in self.passed_pipes and pipe.x < self.bird.x:
                     self.passed_pipes.append(pipe)
                     self.score += 1
                     self.assets.sfx_swoosh.play()
 
-            # ground collision
             bird_height = self.bird.image.get_height()
             if self.bird.y + bird_height >= self.ground_y:
                 self.bird.y = self.ground_y - bird_height
                 self.game_over()
 
-    # ================= DRAW =================
+
+
     def draw(self, screen):
         self.renderer.draw_background(screen, self.bg_x)
         self.renderer.draw_pipes(screen, self.pipes)
@@ -213,7 +205,7 @@ class FlappyScene:
             if self.state == "GAME_OVER":
                 self.ui.draw_game_over(screen)
 
-        if self.pause:
+        if self.state == "PAUSE":
             self.ui.draw_pause(screen)
 
 
@@ -228,10 +220,4 @@ class FlappyScene:
 
 
     def reset(self):
-        self.bird = Bird(self.width // 2 - 20, self.height // 2, self.assets)
-        self.pipes = []
-        self.passed_pipes = []
-        self.spawn_timer = 0
-        self.score = 0
-        self.state = "HOME"
-        self.pause = False
+        self.__init__(self.width, self.height, self.game, self.assets)

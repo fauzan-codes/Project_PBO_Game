@@ -24,18 +24,23 @@ class GameSelect:
             {
                 "name": "Dino Run Chrome", 
                 "class": DinoGame, 
-                "image": "Snake_poster.png"
+                "image": "DinoRun_poster.png"
             },
-            {
-                "name": "Game 4", 
-                "class": None, 
-                "image": "img-tes.png"
-            },
-            {
-                "name": "Game 5", 
-                "class": None, 
-                "image": "img-tes.png"
-            },
+            # {
+            #     "name": "Typing Game", 
+            #     "class": None, 
+            #     "image": "img-tes.png"
+            # },
+            # {
+            #     "name": "jumpscare game", 
+            #     "class": None, 
+            #     "image": "img-tes.png"
+            # },
+            # {
+            #     "name": "ZType", 
+            #     "class": None, 
+            #     "image": "img-tes.png"
+            # },
         ]
 
 
@@ -55,7 +60,7 @@ class GameSelect:
         self.game_manager.asset.play_random_music(volume=0.3)
 
 
-    # ===== HANDLE EVENT =====
+
     def handle_event(self, event):
         # KEYBOARD
         if event.type == pygame.KEYDOWN:
@@ -71,11 +76,15 @@ class GameSelect:
                 from scenes.home import Home
                 self.game_manager.change_scene(Home(self.game_manager))
 
+            if event.key == pygame.K_m:
+                self.game_manager.asset.toggle_mute()
+
+
         # MOUSE
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             mouse_pos = pygame.mouse.get_pos()
 
-            # BACK BUTTON
+            # back btn
             for i, rect in enumerate(self.card_rects):
                 if rect.collidepoint(mouse_pos):
                     self.start_game(i)
@@ -97,11 +106,12 @@ class GameSelect:
         self.game_manager.asset.update_music()
 
 
-    # ===== UI =====
+
     def draw(self, screen):
         screen.fill((30, 30, 40))
 
         screen_width = screen.get_width()
+        screen_height = screen.get_height()
 
     
         # title
@@ -111,7 +121,8 @@ class GameSelect:
 
         mouse_pos = pygame.mouse.get_pos()
 
-        cols = 3
+        cols = min(3, len(self.games))
+        rows = (len(self.games) + cols - 1) // cols
         card_width = 200
         card_height = 230
 
@@ -119,8 +130,10 @@ class GameSelect:
         padding = 30
 
         total_width = cols * card_width + (cols - 1) * padding
+        total_height = rows * card_height + (rows - 1) * padding
         start_x = (screen_width - total_width) // 2
-        start_y = 150
+        start_y = (screen_height - total_height) // 2
+        # start_y = 150
 
         self.card_rects = []
 

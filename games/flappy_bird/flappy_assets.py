@@ -3,8 +3,10 @@ import pygame
 import os
 
 class FlappyAssets:
-    def __init__(self):
+    def __init__(self, asset_manager):
         BASE_DIR = os.path.dirname(__file__)
+
+        self.asset_manager = asset_manager
 
         self.background = pygame.image.load(
             os.path.join(BASE_DIR, "../../assets/FlappyBird/background.png")
@@ -26,33 +28,19 @@ class FlappyAssets:
         ]
 
         # UI
-        self.gameover = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/gameover.png")
-        )
+        self.gameover = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/gameover.png"))
 
-        self.get_ready = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/getready-text.png")
-        )
+        self.get_ready = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/getready-text.png"))
 
-        self.tap = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/tap.png")
-        )
+        self.tap = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/tap.png"))
 
-        self.title = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/flappybird-text.png")
-        )
+        self.title = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/flappybird-text.png"))
 
-        self.restart = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/restart.png")
-        )
+        self.restart = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/restart.png"))
 
-        self.resume = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/resume.png")
-        )
+        self.resume = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/resume.png"))
 
-        self.bird_die = pygame.image.load(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/bird-die.png")
-        )
+        self.bird_die = pygame.image.load(os.path.join(BASE_DIR, "../../assets/FlappyBird/bird-die.png"))
 
         # NUMBER (score)
         self.numbers = []
@@ -63,18 +51,17 @@ class FlappyAssets:
             self.numbers.append(img)
 
         # SFX
-        self.sfx_die = pygame.mixer.Sound(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/die.ogg")
-        )
-        self.sfx_hit = pygame.mixer.Sound(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/hit.ogg")
-        )
-        self.sfx_wing = pygame.mixer.Sound(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/wing.ogg")
-        )
-        self.sfx_swoosh = pygame.mixer.Sound(
-            os.path.join(BASE_DIR, "../../assets/FlappyBird/swoosh.ogg")
-        )
+        self.sfx_die = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/FlappyBird/die.ogg"))
+        self.asset_manager.register_sound(self.sfx_die)
+
+        self.sfx_hit = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/FlappyBird/hit.ogg"))
+        self.asset_manager.register_sound(self.sfx_hit)
+
+        self.sfx_wing = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/FlappyBird/wing.ogg"))
+        self.asset_manager.register_sound(self.sfx_wing)
+
+        self.sfx_swoosh = pygame.mixer.Sound(os.path.join(BASE_DIR, "../../assets/FlappyBird/swoosh.ogg"))
+        self.asset_manager.register_sound(self.sfx_swoosh)
 
         # volume
         self.sfx_die.set_volume(0.5)

@@ -14,7 +14,7 @@ class GameManager:
         self.transition_alpha = 0
         self.transition_speed = 20
         self.next_scene = None
-        self.transition_mode = "in"  # in / out
+        self.transition_mode = "in"
 
     def load_game(self, game):
         self.current_game = game

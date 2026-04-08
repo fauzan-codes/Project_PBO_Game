@@ -1,413 +1,248 @@
-# Project_PBO_Game
-
 # 🎮 Game Collection PBO - Pygame Project
 
 ## 📌 Deskripsi Project
 
 Project ini merupakan implementasi **Pemrograman Berbasis Objek (PBO)** menggunakan Python dengan library **Pygame**.
 
-Aplikasi yang dibuat adalah sebuah **Game Collection (Game Hub)** yang berisi beberapa game 2D klasik dalam satu program. Setiap game dibuat secara modular (terpisah), namun semuanya dapat diakses melalui satu menu utama.
+Aplikasi ini adalah sebuah **Game Collection (Game Hub)** yang berisi beberapa game 2D klasik dalam satu aplikasi, yaitu:
 
-Contoh game yang akan dibuat:
-- Snake
-- Flappy Bird
-- Game3
-- Game4
-- Game5
+- 🐍 Snake
+- 🐦 Flappy Bird
+- 🦖 Dino Run
 
-Project ini tidak hanya berfokus pada gameplay, tetapi juga pada penerapan konsep **OOP/PBO secara benar dan terstruktur**.
+Setiap game dibuat secara **modular (terpisah)**, namun dikontrol oleh satu sistem utama (**Game Manager**).
 
 ---
 
 ## 🎯 Tujuan Project
 
-Tujuan utama dari project ini adalah:
-
-1. Mengimplementasikan konsep **Pemrograman Berbasis Objek (PBO)**:
-   - Class
-   - Object
-   - Inheritance
-2. Membuat game sederhana menggunakan Pygame
-3. Melatih kemampuan membuat program modular dan scalable
-4. Mengembangkan kreativitas dalam desain game
-5. Membuat struktur kode yang rapi, jelas, dan mudah dipahami
+- Mengimplementasikan konsep **OOP/PBO secara nyata**
+- Membuat sistem **multi-game dalam satu aplikasi**
+- Membangun arsitektur program yang **rapi, scalable, dan reusable**
+- Melatih pembuatan game dengan **event-driven system (Pygame)**
 
 ---
 
 ## 🧠 Konsep PBO yang Digunakan
 
-### 1. Class & Object
-
-Semua elemen dalam game dibuat dalam bentuk object.
-
-Contoh:
+### ✅ Class & Object
+Semua elemen game berbasis object:
 - Player
-- Enemy
 - Obstacle
-- Item
+- UI
+- Scene
 
+---
+
+### ✅ Inheritance
 ```python
-class Player:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+GameObject → Snake / Bird / Dino
+BaseGame   → SnakeGame / FlappyGame / DinoGame
 ```
-
-
-### 2. Inheritance (WAJIB)
-
-Inheritance digunakan untuk membuat class turunan dari class utama.
-
-Contoh:
-
-```python
-class GameObject:
-    def update(self):
-        pass
-
-    def draw(self, screen):
-        pass
-
-class Bird(GameObject):
-    def update(self):
-        # implementasi khusus
-```
-
-Manfaat:
-- Mengurangi duplikasi kode
-- Struktur lebih rapi
-- Mudah dikembangkan
-
-
-### 3. Encapsulation
-
-Digunakan untuk menyembunyikan data dalam class.
-
-Contoh:
-```python
-self._speed = 5
-```
-
-
-### 4. Polymorphism (Bonus)
-
-Method yang sama digunakan oleh object berbeda. Namun tiap object memiliki perilaku berbeda.
-
-Contoh:
-```python
-object.update()
-```
-
 
 ---
 
 ## 🏗️ Arsitektur Sistem
+Project menggunakan konsep:
+🎮 Game Hub System (Multi-Scene + Multi-Game)
 
-Project ini menggunakan konsep: 🎮 Game Hub / Multi-Game System
-
-Dimana:
-- Setiap game berdiri sendiri (independent)
-- Semua game diatur oleh satu sistem utama (Game Manager)
-- User dapat memilih game dari menu
-
+Komponen Utama:
+ - Game Manager (Mengatur perpindahan scene)
+ - Scene System (Home, Game Select, Game Scene)
+ - BaseGame (Template semua game)
+ - Game Scene (Logic tiap game (SnakeScene, FlappyScene, DinoScene))
 
 ---
 
-## 🔁 Alur Program
-
-```teks
-START PROGRAM
-     ↓
-MAIN MENU
-     ↓
+## 🔁 Alur Program (Global)
+ ```text
+ START
+  ↓
+HOME MENU
+  ↓
+GAME SELECT
+  ↓
 PILIH GAME
-     ↓
-GAME BERJALAN
-     ↓
+  ↓
+GAME SCENE (HOME → PLAYING)
+  ↓
 PAUSE / GAME OVER
-     ↓
-KEMBALI KE MENU
+  ↓
+KEMBALI / RESTART
 ```
 
+---
+
+## 🔄 Alur Internal Game (State System)
+Setiap game menggunakan state machine:
+```text
+HOME → LEVEL (optional) → PLAYING → PAUSE → GAME_OVER
+```
 
 ---
 
-## 📂 Struktur Folder Project
-
-```teks
+## 📂 Struktur Project
+```text
 project_pbo_game/
 │
-├── main.py                  # Entry point program
-├── game_manager.py          # Pengatur perpindahan game
+├── main.py
+├── game_manager.py
 │
-├── core/                    # Base class (inti PBO)
-│   ├── game_object.py       # Parent semua object
-│   ├── base_game.py         # Parent semua game
+├── core/
+│   ├── base_game.py        # Template game
+│   ├── game_object.py      # Base object
+│   └── asset_manager.py   
 │
-├── scenes/                  # UI / scene
-│   ├── menu.py              # Menu utama
-│   ├── pause.py             # Pause menu
+├── scenes/
+│   ├── home.py
+│   └── game_select.py      # Pilih game
 │
-├── games/                   # Semua game
-│
+├── games/
 │   ├── snake/
-│   │   ├── snake_game.py
-│   │   ├── snake.py
-│   │   ├── food.py
+│   ├── flappy_bird/
+│   └── dino_run/
 │
-│   ├── flappy/
-│   │   ├── flappy_game.py
-│   │   ├── bird.py
-│   │   ├── pipe.py
-│
-│   ├── pong/
-│   │   ├── pong_game.py
-│
-│   ├── shooter/
-│   │   ├── shooter_game.py
-│
-│   ├── breakout/
-│   │   ├── breakout_game.py
-│
-└── assets/                  # Gambar, sound, font
+└── assets/
 ```
 
- 
 ---
 
-## ⚙️ Penjelasan Struktur
+## ⚙️ Cara Kerja Sistem
 
 ### 1. main.py
 
-File utama untuk menjalankan program.
+ - Inisialisasi pygame
+ - Menjalankan game loop
 
-Tugas:
-- Inisialisasi pygame
-- Game loop utama
-- Memanggil Game Manager
+### 2. Game Manager
 
+ - Mengatur scene aktif
+ - Pindah antar game
+ - Handle music global
 
-### 2. game_manager.py
+### 3. BaseGame
 
-Mengatur game yang sedang aktif.
+Mengatur:
+ - Layout game (window / fullscreen)
+ - Scaling (smooth / pixel)
+ - Header UI
+ - Info panel
+ - Scroll system
 
-Fungsi:
-- Load game
-- Switch game
-- Update game
-- Render game
+### 4. Scene (Game Logic)
 
+Contoh:
+ - SnakeScene
+ - FlappyScene
+ - DinoScene
 
-### 3. core/
-
-Berisi class dasar (PBO utama)
-
-game_object.py
-Parent untuk semua object dalam game:
-- Player
-- Enemy
-- Obstacle
-
-base_game.py
-Parent untuk semua game:
-- SnakeGame
-- FlappyGame
-- PongGame
-
-
-### 4. scenes/
-
-Berisi UI:
-- Menu utama
-- Pause menu
-- Game over screen
-
-
-### 5. games/
-
-Setiap game:
-- Dipisah folder
-- Berdiri sendiri
-- Punya class sendiri
-
+Berisi:
+ - State game
+ - Input handling
+ - Update logic
+ - Rendering
 
 ---
 
-## 🎮 Standar Implementasi Game
+## 🎮 Fitur Utama
 
-Setiap game minimal memiliki:
-- Player (karakter utama)
-- Obstacle / musuh
-- Sistem score
-- Collision detection
-- Update & render loop
+### Multi Game System
+ - Bisa pindah game tanpa restart aplikasi
 
+### Scene-Based Architecture
+ - Home
+ - Game Select
+ - Game Scene
 
----
+### State Machine
+ - HOME
+ - PLAYING
+ - PAUSE
+ - GAME OVER
 
-## 🔗 Integrasi Antar Game
+### Responsive Layout
+ - Window mode & Fullscreen
+ - Auto scaling 4:3 ratio
 
-PENTING:
-- Game tidak saling terhubung langsung
-- Setiap game memiliki:
-    - Class sendiri
-    - Logic sendiri
-- Integrasi hanya melalui:
-    - Game Manager
-    - Menu system
-
-
----
-
-## 🧩 Struktur Class (PBO)
-
-### GameObject
-
+### Smooth / Pixel Scaling
 ```python
-class GameObject:
-    def update(self):
-        pass
-
-    def draw(self, screen):
-        pass
+smoothscale (grafis halus)
+scale (pixel gameplay)
 ```
 
-### BaseGame
+### Audio System
+ - Background Music
+ - Sound Effect
+ - Mute toggle (M)
 
-```python
-class BaseGame:
-    def handle_event(self, event):
-        pass
-
-    def update(self):
-        pass
-
-    def draw(self, screen):
-        pass
-```
-
-### Contoh Turunan
-
-```python
-class SnakeGame(BaseGame):
-    pass
-
-class Snake(GameObject):
-    pass
-```
+### UI System
+ - Header (judul + tombol)
+ - Info panel
+ - Button interaktif
 
 
 ---
 
-## 🧪 Fitur Global (Semua Game)
-
-Setiap game harus memiliki:
-- Pause
-- Restart
-- Exit ke menu
-- Game over screen
+## 🎮 Kontrol Global
+ - ESC   : Pause / Back
+ - M     : Mute
+ - F     : Fullscreen
+ - Mouse : Navigasi UI
 
 
 ---
 
-## ⚠️ Hal Penting yang Harus Diperhatikan
+## 🐍 Snake Controls
+ - WASD / Arrow : Gerak
+ - ESC          : Pause
+ - R            : Restart
+ - H            : Home
 
-### 1. Fokus pada kualitas, bukan jumlah
+---
 
-- Lebih baik 2–3 game bagus
-- Daripada 5 game tapi tidak selesai
+## 🐦 Flappy Bird Controls
+ - Space/Click  : Lompat
+ - ESC          : Pause
+ - R            : Restart
 
+---
 
-### 2. Minimal 1 game dijelaskan detail
+## 🦖 Dino Run Controls
+ - SPACE / UP   : Lompat
+ - DOWN         : Duck
+ - ESC          : Pause
+ - R            : Restart
 
-Untuk video penjelasan:
-- Pilih 1 game utama
-- Jelaskan class, inheritance, dan logic
+---
 
+## 🧩 Mekanisme Game
 
-### 3. Pastikan tidak error
+### Snake
+ - Makan food → tambah panjang
+ - Speed meningkat tiap skor tertentu
+ - Game over jika tabrak tubuh
 
-Game HARUS:
-- Bisa dijalankan
-- Tidak crash
+### Flappy Bird
+ - Hindari pipa
+ - Skor bertambah saat melewati pipa
+ - Gap mengecil seiring skor
 
-
-### 4. Gunakan inheritance
-
-Minimal:
-- GameObject → Player
-- BaseGame → Game turunan
-
-
-### 5. Code harus rapi
-
-- Pisah file
-- Gunakan nama jelas
-- Hindari kode berantakan
+### Dino Run
+ - Hindari obstacle
+ - Speed meningkat seiring waktu
+ - Score berdasarkan waktu hidup
 
 
 ---
 
-## 🏆 Tips Mendapat Nilai Tinggi
-
-- Gunakan struktur PBO yang jelas
-- Terapkan inheritance dengan benar
-- Tambahkan fitur:
-    - Score
-    - Sound
-    - Animasi
-- Buat UI sederhana tapi jelas
-- Pastikan game playable
-
+## Assets
+- <a href="">Snake</a>
+- <a href="">Flappy Bird</a>
+- <a href="">Dino Run</a>
 
 ---
 
-## 💡 Rencana Pengembangan
+ ## Developer
 
-Project ini dapat dikembangkan menjadi:
-- Tambah game baru
-- Sistem save score
-- Multiplayer (lanjut)
-- UI lebih interaktif
-
-
----
-
-## 📌 Catatan Developer
-
-- Setiap game dibuat modular
-- Mengutamakan clean code
-- Mudah dikembangkan (scalable)
-
-
----
-
-## 🏁 Penutup
-
-Project ini dibuat sebagai implementasi nyata dari konsep PBO dalam bentuk game.
-
-Dengan project ini diharapkan mahasiswa dapat memahami:
-- Cara kerja OOP
-- Struktur program besar
-- Pengelolaan banyak class dalam satu sistem
-
-
-
----
-
-# 🚀 Next Step (Saran dari aku)
-
-Kalau kamu serius mau bikin ini:
-
-👉 Step terbaik:
-1. Setup project (folder + main + manager)
-2. Buat base class (GameObject & BaseGame)
-3. Buat menu
-4. Baru implement game satu-satu
-
-Kalau mau, aku bisa langsung:
-👉 bikinin **starter template code (tinggal jalan)**  
-👉 atau mulai dari **main + game manager dulu**
-
-Tinggal bilang aja 👍
-
+  - Fauzan Adhim Muntazhar (003)
+  - TIA25

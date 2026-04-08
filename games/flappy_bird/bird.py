@@ -7,7 +7,6 @@ class Bird:
         self.y = y
 
         self.assets = assets
-
         self.dead = False
 
         self.velocity = 0
